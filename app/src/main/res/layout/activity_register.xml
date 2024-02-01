@@ -10,29 +10,47 @@
         android:id="@+id/password"
         android:layout_width="350dp"
         android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="31dp"
+        android:layout_marginBottom="38dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="30dp"
-        tools:layout_editor_absoluteY="215dp" />
+        app:layout_constraintBottom_toTopOf="@+id/register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
     <EditText
         android:id="@+id/email"
         android:layout_width="350dp"
         android:layout_height="50dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="144dp"
+        android:layout_marginEnd="31dp"
+        android:layout_marginBottom="21dp"
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
         android:textColor="#0000FF"
-        tools:layout_editor_absoluteX="30dp"
-        tools:layout_editor_absoluteY="144dp" />
+        app:layout_constraintBottom_toTopOf="@+id/password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/register"
         android:layout_width="200dp"
         android:layout_height="50dp"
+        android:layout_marginStart="105dp"
+        android:layout_marginTop="27dp"
+        android:layout_marginEnd="106dp"
+        android:layout_marginBottom="368dp"
         android:text="Register"
-        tools:layout_editor_absoluteX="105dp"
-        tools:layout_editor_absoluteY="303dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
