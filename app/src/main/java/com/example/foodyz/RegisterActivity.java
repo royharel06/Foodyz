@@ -3,6 +3,7 @@ package com.example.foodyz;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -12,7 +13,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -58,6 +58,8 @@ public class RegisterActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Toast. makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(RegisterActivity.this, Personal_MainActivity.class));
+                    finish();
                 } else {
                     Toast. makeText(RegisterActivity.this, "Registration failed!", Toast.LENGTH_SHORT).show();
                 }
