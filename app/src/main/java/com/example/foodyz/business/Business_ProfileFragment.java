@@ -1,4 +1,4 @@
-package com.example.foodyz.personal;
+package com.example.foodyz.business;
 
 import android.os.Bundle;
 
@@ -12,10 +12,10 @@ import com.example.foodyz.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link Personal_ProfileFragment#newInstance} factory method to
+ * Use the {@link Business_ProfileFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class Personal_ProfileFragment extends Fragment {
+public class Business_ProfileFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,7 +26,7 @@ public class Personal_ProfileFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public Personal_ProfileFragment() {
+    public Business_ProfileFragment() {
         // Required empty public constructor
     }
 
@@ -36,11 +36,11 @@ public class Personal_ProfileFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ProfileFragment.
+     * @return A new instance of fragment Business_ProfileFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static Personal_ProfileFragment newInstance(String param1, String param2) {
-        Personal_ProfileFragment fragment = new Personal_ProfileFragment();
+    public static Business_ProfileFragment newInstance(String param1, String param2) {
+        Business_ProfileFragment fragment = new Business_ProfileFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -61,6 +61,6 @@ public class Personal_ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_personal_profile, container, false);
+        return inflater.inflate(R.layout.fragment_business__profile, container, false);
     }
 }

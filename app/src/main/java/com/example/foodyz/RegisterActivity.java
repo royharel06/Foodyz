@@ -9,8 +9,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
+import com.example.foodyz.business.Business_MainActivity;
 import com.example.foodyz.personal.Personal_MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -21,6 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
+    private RadioButton radioPersonal;
     private Button register;
 
     private FirebaseAuth auth;
@@ -32,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
+        radioPersonal = findViewById(R.id.radio_personal);
         register = findViewById(R.id.register);
 
         auth = FirebaseAuth.getInstance();
@@ -41,28 +46,39 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String txt_email = email.getText().toString();
                 String txt_password = password.getText().toString();
+                boolean isPersonal = radioPersonal.isChecked();
 
                 if (TextUtils.isEmpty(txt_email) || TextUtils.isEmpty(txt_password)) {
                     Toast.makeText(RegisterActivity.this, "Empty credentials!", Toast.LENGTH_SHORT).show();
                 } else if (txt_password.length() < 4) {
                     Toast.makeText(RegisterActivity.this, "Password too short!", Toast.LENGTH_SHORT).show();
                 } else {
-                    registerUser(txt_email, txt_password);
+                    registerUser(txt_email, txt_password, isPersonal);
                 }
             }
         });
     }
 
-    private void registerUser(String email, String password) {
+    private void registerUser(String email, String password, boolean isPersonal) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Toast. makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(RegisterActivity.this, Personal_MainActivity.class));
+
+                    // TODO: save to table user type!
+
+                    // Start the appropriate activity based on user type:
+                    if (isPersonal)
+                        startActivity(new Intent(RegisterActivity.this, Personal_MainActivity.class));
+                    else
+                        startActivity(new Intent(RegisterActivity.this, Business_MainActivity.class));
+
                     finish();
                 } else {
                     Toast. makeText(RegisterActivity.this, "Registration failed!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(RegisterActivity.this, StartActivity.class));
+                    finish();
                 }
             }
         });

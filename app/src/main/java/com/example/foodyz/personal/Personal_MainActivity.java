@@ -26,7 +26,7 @@ public class Personal_MainActivity extends AppCompatActivity {
 
         replaceFragment(new SearchFragment());
 
-        binding.bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+        binding.personalBottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
@@ -35,7 +35,7 @@ public class Personal_MainActivity extends AppCompatActivity {
                     replaceFragment(new SearchFragment());
                 } else if (id == R.id.history) {
                     replaceFragment(new HistoryFragment());
-                } else if (id == R.id.profile) {
+                } else if (id == R.id.personal_profile) {
                     replaceFragment(new Personal_ProfileFragment());
                 }
 
@@ -47,7 +47,7 @@ public class Personal_MainActivity extends AppCompatActivity {
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_layout, fragment);
+        fragmentTransaction.replace(R.id.personal_frame_layout, fragment);
         fragmentTransaction.commit();
     }
 }
