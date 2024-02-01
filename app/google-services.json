@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "292220265825",
+    "project_id": "foodyz-6ba65",
+    "storage_bucket": "foodyz-6ba65.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:292220265825:android:e304091535af0814a15120",
+        "android_client_info": {
+          "package_name": "com.example.foodyz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC97NGWQQ4SrNYSEJVYjZV19LSUgdmHDlY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
