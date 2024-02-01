@@ -1,4 +1,4 @@
-package com.example.foodyz;
+package com.example.foodyz.personal;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.example.foodyz.R;
 import com.example.foodyz.databinding.ActivityPersonalMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -35,7 +36,7 @@ public class Personal_MainActivity extends AppCompatActivity {
                 } else if (id == R.id.history) {
                     replaceFragment(new HistoryFragment());
                 } else if (id == R.id.profile) {
-                    replaceFragment(new ProfileFragment());
+                    replaceFragment(new Personal_ProfileFragment());
                 }
 
                 return true;

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/orders"
+        android:icon="@drawable/baseline_content_paste_24"
+        android:title="Orders"/>
+    <item
+        android:id="@+id/edit_menu"
+        android:icon="@drawable/baseline_create_24"
+        android:title="Edit Menu" />
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/baseline_account_circle_24"
+        android:title="Profile"/>
+</menu>
