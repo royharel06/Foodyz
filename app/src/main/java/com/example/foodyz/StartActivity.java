@@ -19,8 +19,8 @@ public class StartActivity extends AppCompatActivity {
         setContentView(R.layout.activity_start);
 
         login = findViewById(R.id.login);
-        register_personal = findViewById(R.id.register_personal);
-        register_business = findViewById(R.id.register_business);
+        register_personal = findViewById(R.id.register_personal_forward);
+        register_business = findViewById(R.id.register_business_forward);
 
         login.setOnClickListener(new View.OnClickListener() {
             @Override

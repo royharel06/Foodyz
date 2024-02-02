@@ -22,11 +22,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
 
 public class Personal_RegisterActivity extends AppCompatActivity {
     private FirebaseAuth auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +44,7 @@ public class Personal_RegisterActivity extends AppCompatActivity {
         EditText card_month = findViewById(R.id.card_month);
         EditText card_year = findViewById(R.id.card_year);
 
-        Button register = findViewById(R.id.register_business);
+        Button register = findViewById(R.id.register_personal);
 
         auth = FirebaseAuth.getInstance();
 
@@ -210,9 +210,5 @@ public class Personal_RegisterActivity extends AppCompatActivity {
                     // Handle errors
                     Log.e("Firestore", "Error adding document", e);
                 });
-
-
-
-
     }
 }
