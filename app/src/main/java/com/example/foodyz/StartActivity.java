@@ -9,28 +9,37 @@ import android.widget.Button;
 
 public class StartActivity extends AppCompatActivity {
 
-    private Button register;
     private Button login;
+    private Button register_personal;
+    private Button register_business;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        register = findViewById(R.id.register);
         login = findViewById(R.id.login);
+        register_personal = findViewById(R.id.register_personal);
+        register_business = findViewById(R.id.register_business);
 
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(StartActivity.this, RegisterActivity.class));
-                finish();
-            }
-        });
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(StartActivity.this, LoginActivity.class));
+                finish();
+            }
+        });
+        register_personal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(StartActivity.this, Personal_RegisterActivity.class));
+                finish();
+            }
+        });
+        register_business.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(StartActivity.this, Business_RegisterActivity.class));
                 finish();
             }
         });
