@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -17,11 +18,15 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class PlaceOrderFragment extends Fragment {
 
     private LinearLayout placeOrderLinearLayout;
     private String businessId;
+    private List<String> selectedProducts = new ArrayList<>();
 
     public PlaceOrderFragment() {
     }
@@ -89,14 +94,31 @@ public class PlaceOrderFragment extends Fragment {
         String buttonText = String.format("%s\n%s\n%s ₪", productName, productDetails, unitPrice);
         button.setText(buttonText);
 
-        // Set any other properties for the button as needed
-
-        // Add an OnClickListener if you want to handle button clicks
+        // Add an OnClickListener to handle button clicks
+        button.setOnClickListener(v -> {
+            // Handle button click here
+            addProductToOrderList(productName);
+        });
 
         // Add the button to the LinearLayout inside the ScrollView
         placeOrderLinearLayout.addView(button);
     }
 
+    
+
+
+    private void addProductToOrderList(String productName) {
+        // Add the selected product to the order list
+        selectedProducts.add(productName);
+
+        // Optionally, you can update the UI or perform any other actions based on the selected product
+        Toast.makeText(requireContext(), "Product added to order list: " + productName, Toast.LENGTH_SHORT).show();
+    }
+
+
 
 }
+
+
+
 
