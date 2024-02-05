@@ -28,4 +28,5 @@
             <!-- Buttons will be dynamically added here -->
         </LinearLayout>
     </ScrollView>
+
 </RelativeLayout>
