@@ -16,6 +16,7 @@
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
+        android:text="123456"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/email" />
@@ -31,6 +32,7 @@
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
+        android:text="Daniel@gmail.com"
         android:textColor="#0000FF"
         app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
