@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.example.foodyz.R;
 import com.google.firebase.firestore.CollectionReference;
@@ -76,6 +78,8 @@ public class PlaceOrderFragment extends Fragment {
                     // Call the updated function with additional information
                     createButtonWithProductName(productName, productDetails, unitPrice);
                 }
+                // Create "CompleteOrder" button after product buttons
+                createCompleteOrderButton();
             } else {
                 // Handle errors
                 Exception exception = task.getException();
@@ -104,7 +108,31 @@ public class PlaceOrderFragment extends Fragment {
         placeOrderLinearLayout.addView(button);
     }
 
-    
+    private void navigateToCompleteOrder(String businessId, List<String> selectedProducts) {
+        // Create an instance of CompleteOrderFragment with the selected products and businessId
+        CompleteOrderFragment completeOrderFragment = CompleteOrderFragment.newInstance(businessId, selectedProducts);
+
+        // Replace the current fragment with CompleteOrderFragment
+        getParentFragmentManager().beginTransaction()
+                .replace(R.id.personal_frame_layout, completeOrderFragment)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    private void createCompleteOrderButton() {
+        // Create a button for completing the order
+        Button completeOrderButton = new Button(requireContext());
+        completeOrderButton.setText("Complete Order");
+
+        // Add an OnClickListener to handle button clicks
+        completeOrderButton.setOnClickListener(v -> {
+            // Navigate to CompleteOrderFragment when "Complete Order" button is clicked
+            navigateToCompleteOrder(businessId,selectedProducts);
+        });
+
+        // Add the "Complete Order" button to the LinearLayout inside the ScrollView
+        placeOrderLinearLayout.addView(completeOrderButton);
+    }
 
 
     private void addProductToOrderList(String productName) {
