@@ -1,0 +1,29 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- ScrollView containing LinearLayout for product names -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/completeOrderLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <!-- Product names will be dynamically added here -->
+
+            <!-- TextView for total cost -->
+            <TextView
+                android:id="@+id/totalTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Total: 0.0"
+                android:textSize="18sp"
+                android:padding="16dp"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
