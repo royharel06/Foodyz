@@ -12,30 +12,37 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Foodyz"
         tools:targetApi="31">
+
         <activity
             android:name=".Business_RegisterActivity"
             android:exported="false" />
+
         <activity
             android:name=".business.Business_MainActivity"
             android:exported="false" />
+
         <activity
             android:name=".personal.Personal_MainActivity"
             android:exported="false" />
+
         <activity
             android:name=".LoginActivity"
             android:exported="false" />
+
         <activity
             android:name=".Personal_RegisterActivity"
             android:exported="false" />
+
         <activity
             android:name=".StartActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+
     </application>
 
 </manifest>
