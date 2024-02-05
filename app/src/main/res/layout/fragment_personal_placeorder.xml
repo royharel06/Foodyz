@@ -1,27 +1,26 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <!-- Search EditText at the top -->
     <EditText
-        android:id="@+id/searchEditText"
+        android:id="@+id/searchProductEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search business"
+        android:hint="Search Product"
         android:textSize="18sp"
         android:gravity="center"
         android:padding="16dp"/>
 
     <!-- ScrollView containing LinearLayout for buttons -->
     <ScrollView
+        android:layout_below="@id/searchProductEditText"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/yourLinearLayout"
+            android:id="@+id/placeOrderLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -30,4 +29,4 @@
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+</RelativeLayout>

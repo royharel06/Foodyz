@@ -7,8 +7,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 import com.example.foodyz.R;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -57,10 +64,53 @@ public class EditMenuFragment extends Fragment {
         }
     }
 
+
+    private FirebaseFirestore db;
+    private LinearLayout yourLinearLayout;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_edit_menu, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_edit_menu, container, false);
+
+        db = FirebaseFirestore.getInstance();
+
+        // Reference to your LinearLayout inside the ScrollView
+        yourLinearLayout = rootView.findViewById(R.id.yourLinearLayout);
+
+        // Query Firestore and create buttons
+        queryFirestoreAndCreateButtons();
+
+        return rootView;
+    }
+
+    private void queryFirestoreAndCreateButtons() {
+        CollectionReference businessCollection = db.collection("business-accounts");
+
+        businessCollection.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot document : task.getResult()) {
+                    String userName = document.getString("user-name");
+                    createButtonWithUserName(userName);
+                }
+            } else {
+                // Handle errors
+                Exception exception = task.getException();
+                if (exception != null) {
+                    exception.printStackTrace();
+                }
+            }
+        });
+    }
+
+    private void createButtonWithUserName(String userName) {
+        Button button = new Button(requireContext());
+        button.setText(userName);
+
+        // Set any other properties for the button as needed
+
+        // Add an OnClickListener if you want to handle button clicks
+
+        // Add the button to your LinearLayout inside the ScrollView
+        yourLinearLayout.addView(button);
     }
 }

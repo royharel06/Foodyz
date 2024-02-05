@@ -13,6 +13,7 @@ import com.example.foodyz.R;
 import com.example.foodyz.databinding.ActivityPersonalMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
+
 public class Personal_MainActivity extends AppCompatActivity {
 
     ActivityPersonalMainBinding binding;
@@ -32,6 +33,7 @@ public class Personal_MainActivity extends AppCompatActivity {
                 int id = item.getItemId();
 
                 if (id == R.id.search) {
+                    // Handle the search button click
                     replaceFragment(new SearchFragment());
                 } else if (id == R.id.history) {
                     replaceFragment(new HistoryFragment());
@@ -44,10 +46,12 @@ public class Personal_MainActivity extends AppCompatActivity {
         });
     }
 
-    private void replaceFragment(Fragment fragment) {
+    public void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.personal_frame_layout, fragment);
         fragmentTransaction.commit();
     }
+
+
 }
