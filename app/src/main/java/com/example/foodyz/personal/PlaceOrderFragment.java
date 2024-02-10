@@ -6,8 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -48,7 +51,7 @@ public class PlaceOrderFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_place_order, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_personal_placeorder, container, false);
 
         placeOrderLinearLayout = rootView.findViewById(R.id.placeOrderLinearLayout);
 
@@ -139,6 +142,9 @@ public class PlaceOrderFragment extends Fragment {
         // Optionally, you can update the UI or perform any other actions based on the selected product
         Toast.makeText(requireContext(), "Product added to order list: " + productName, Toast.LENGTH_SHORT).show();
     }
+
+
+
 }
 
 

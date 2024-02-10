@@ -48,7 +48,7 @@ public class Business_MainActivity extends AppCompatActivity {
         });
     }
 
-    public void replaceFragment(Fragment fragment) {
+    private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.business_frame_layout, fragment);

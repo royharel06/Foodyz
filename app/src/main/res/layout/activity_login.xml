@@ -32,7 +32,7 @@
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        android:text="Roy@gmail.com"
+        android:text="Daniel@gmail.com"
         android:textColor="#0000FF"
         app:layout_constraintBottom_toTopOf="@+id/password"
         app:layout_constraintEnd_toEndOf="parent"
