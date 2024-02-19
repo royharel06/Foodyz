@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.foodyz.R;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -85,7 +86,7 @@ public class CompleteOrderFragment extends Fragment {
         orderData.put("date", FieldValue.serverTimestamp()); // Add current timestamp
         orderData.put("status", "Not Received");
         orderData.put("total-cost", 0.0); // Initially set total cost to 0
-        orderData.put("personal-id", "fillLater"); // Placeholder for personal ID
+        orderData.put("personal-id", FirebaseAuth.getInstance().getCurrentUser().getUid()); // Set personal-id to the current user's UID
 
         // Add a new document to the "orders" collection
         db.collection("orders").add(orderData)
@@ -98,6 +99,7 @@ public class CompleteOrderFragment extends Fragment {
                     Toast.makeText(requireContext(), "Failed to create order document: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
 
     private void processProducts() {
         if (selectedProducts != null && !selectedProducts.isEmpty()) {
