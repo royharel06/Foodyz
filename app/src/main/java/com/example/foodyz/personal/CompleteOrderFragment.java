@@ -104,12 +104,49 @@ public class CompleteOrderFragment extends Fragment {
             // Calculate quantities and total cost
             Map<String, Integer> quantities = new HashMap<>();
 
+            // Count the occurrences of each product
+            for (String productName : selectedProducts) {
+                quantities.put(productName, quantities.getOrDefault(productName, 0) + 1);
+            }
+
             // Query Firestore for product prices
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             CollectionReference menuCollection = db.collection("business-menu");
 
-            // Start processing the first product
-            processProduct(0, menuCollection, quantities);
+            // Process each unique product
+            for (String productName : quantities.keySet()) {
+                int quantity = quantities.get(productName);
+
+                // Query Firestore to get product price
+                menuCollection.whereEqualTo("business-id", businessId)
+                        .whereEqualTo("product-name", productName)
+                        .get()
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    double unitPrice = document.getDouble("product-price");
+
+                                    // Create a TextView for the product with its details
+                                    createTextViewWithProductDetails(productName, quantity, unitPrice);
+
+                                    // Save order details to Firestore
+                                    saveOrderDetailsToFirestore(productName, quantity, unitPrice);
+
+                                    // Update total cost
+                                    totalCost += unitPrice * quantity;
+                                    totalTextView.setText("Total: " + totalCost);
+                                    // Update total cost in Firestore document
+                                    updateTotalCostInFirestore(totalCost);
+                                }
+                            } else {
+                                // Handle errors
+                                Exception exception = task.getException();
+                                if (exception != null) {
+                                    exception.printStackTrace();
+                                }
+                            }
+                        });
+            }
         } else {
             // Display a message prompt if no products are selected
             TextView noOrderTextView = new TextView(requireContext());
@@ -119,48 +156,6 @@ public class CompleteOrderFragment extends Fragment {
         }
     }
 
-    private void processProduct(int index, CollectionReference menuCollection, Map<String, Integer> quantities) {
-        if (index < selectedProducts.size()) {
-            String productName = selectedProducts.get(index);
-            int quantity = Collections.frequency(selectedProducts, productName);
-
-            // Query Firestore to get product price
-            menuCollection.whereEqualTo("business-id", businessId)
-                    .whereEqualTo("product-name", productName)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                double unitPrice = document.getDouble("product-price");
-
-                                // Update total cost
-                                totalCost += unitPrice * quantity;
-
-                                // Create a TextView for each product
-                                createTextViewWithProductDetails(productName, quantity, unitPrice);
-
-                                // Save order details to Firestore
-                                saveOrderDetailsToFirestore(productName, quantity, unitPrice);
-                            }
-
-                            // Process the next product
-                            processProduct(index + quantity, menuCollection, quantities);
-                        } else {
-                            // Handle errors
-                            Exception exception = task.getException();
-                            if (exception != null) {
-                                exception.printStackTrace();
-                            }
-                        }
-                    });
-        } else {
-            // Update total cost in Firestore for the order document
-            updateTotalCostInFirestore(totalCost);
-
-            // Update the total cost TextView with the new totalCost value
-            totalTextView.setText("Total: " + totalCost);
-        }
-    }
 
     private void createTextViewWithProductDetails(String productName, int quantity, double unitPrice) {
         // Create a TextView
