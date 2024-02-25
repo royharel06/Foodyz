@@ -36,13 +36,14 @@ public class Personal_MainActivity extends AppCompatActivity {
                     // Handle the search button click
                     replaceFragment(new SearchFragment());
                 } else if (id == R.id.history) {
-                    replaceFragment(new HistoryFragment());
+                    replaceFragment(new HistoryFragment()); // Replace with HistoryFragment
                 } else if (id == R.id.personal_profile) {
                     replaceFragment(new Personal_ProfileFragment());
                 }
 
                 return true;
             }
+
         });
     }
 

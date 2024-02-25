@@ -83,7 +83,7 @@ public class CompleteOrderFragment extends Fragment {
         } else {
             // Display a message prompt if no products are selected
             TextView noOrderTextView = new TextView(requireContext());
-            noOrderTextView.setText("You ordered nothing");
+            noOrderTextView.setText("You ordered nothing!!!");
             completeOrderLinearLayout.addView(noOrderTextView);
             totalTextView.setVisibility(View.GONE); // Hide total cost TextView
         }
@@ -133,6 +133,10 @@ public class CompleteOrderFragment extends Fragment {
 
         // Set the text to display product details
         String text = String.format("Product: %s\nQuantity: %d\nUnit Price: %.2f\nTotal Cost: %.2f", productName, quantity, unitPrice, unitPrice * quantity);
+
+
+
+
 
         // Use SpannableString to make "Product: Burger" bold
         SpannableString spannableString = new SpannableString(text);
