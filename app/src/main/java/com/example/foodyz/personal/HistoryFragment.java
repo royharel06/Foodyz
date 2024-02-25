@@ -20,7 +20,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.foodyz.R;
+import com.google.firebase.Firebase;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,56 +37,45 @@ import java.util.Locale;
 
 public class HistoryFragment extends Fragment {
 
-
-    private String businessId;
     private String PersonalId;
     private LinearLayout fragmenthistory;
-
-
 
     public HistoryFragment() {
         // Required empty public constructor
     }
-    public static PlaceOrderFragment newInstance(String businessId , String PersonalId) {
-        PlaceOrderFragment fragment = new PlaceOrderFragment();
-        Bundle args = new Bundle();
-        args.putString("businessId", businessId);
-        args.putString("PersonalId", PersonalId);
 
+    public static HistoryFragment newInstance(String PersonalId) {
+        HistoryFragment fragment = new HistoryFragment();
+        Bundle args = new Bundle();
+        args.putString("PersonalId", PersonalId);
         fragment.setArguments(args);
         return fragment;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            businessId = getArguments().getString("businessId");
-            PersonalId = getArguments().getString("PersonalId");
+            this.PersonalId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
     }
-
 
     @SuppressLint("MissingInflatedId")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
-
         fragmenthistory = rootView.findViewById(R.id.fragmenthistory);
-
         if (getArguments() != null) {
-            businessId = getArguments().getString("businessId");
+            PersonalId = getArguments().getString("PersonalId");
             // Query Firestore and create product buttons
             queryFirestoreAndCreateButtons();
         }
-
         return rootView;
     }
-
 
     private void queryFirestoreAndCreateButtons() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference OrdersCollection = db.collection("orders");
+
 
         OrdersCollection.whereEqualTo("personal-id", PersonalId).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -95,9 +86,10 @@ public class HistoryFragment extends Fragment {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                     String dateString = sdf.format(date);
                     Double Price = document.getDouble("total-cost");
+                    String orderId = document.getId(); // Get the order id
 
                     // Call the updated function with additional information
-                    createButtonWithOrderDetails(BusinessName, dateString, Price);
+                    createButtonWithOrderDetails(BusinessName, dateString, Price, orderId);
                 }
             } else {
                 // Handle errors
@@ -109,8 +101,7 @@ public class HistoryFragment extends Fragment {
         });
     }
 
-
-    private void createButtonWithOrderDetails(String BusinessName, String Date, Double TotalCost) {
+    private void createButtonWithOrderDetails(String BusinessName, String Date, Double TotalCost, String orderId) {
         // Create a button
         Button button = new Button(requireContext());
 
@@ -118,31 +109,31 @@ public class HistoryFragment extends Fragment {
         String buttonText = String.format("%s\n%s\n%s ₪", BusinessName, Date, TotalCost);
         button.setText(buttonText);
 
+        // Set the tag of the button to the order id
+        button.setTag(orderId);
+
         // Add an OnClickListener to handle button clicks
         button.setOnClickListener(v -> {
             // Handle button click here
-            navigateToOrderDetailsFragment(buttonText);
+            String orderIdClicked = (String) v.getTag(); // Get the order id from the clicked button
+            navigateToOrderDetailsFragment(orderIdClicked);
         });
 
         // Add the button to the LinearLayout inside the ScrollView
         fragmenthistory.addView(button);
     }
 
-
-
-    private void navigateToOrderDetailsFragment(String orderDetails) {
+    private void navigateToOrderDetailsFragment(String orderId) {
         // Log statement to check if the method is called
         Log.d("HistoryFragment", "Navigating to OrderDetailsFragment");
 
-        Order_Details_Fragment fragment = Order_Details_Fragment.newInstance(businessId, PersonalId);
-        Bundle args = new Bundle();
-        args.putString("orderDetails", orderDetails);
-        fragment.setArguments(args);
+        // Create a new instance of OrderDetailsFragment and pass the order id
+        Order_Details_Fragment fragment = Order_Details_Fragment.newInstance(orderId);
 
+        // Begin the transaction to replace the current fragment with the OrderDetailsFragment
         getParentFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit();
     }
-
 }
