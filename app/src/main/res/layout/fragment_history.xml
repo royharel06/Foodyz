@@ -16,4 +16,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!-- ScrollView containing LinearLayout for buttons -->
+    <ScrollView
+        android:layout_below="@id/searchProductEditText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/fragmenthistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+        <!-- Buttons will be dynamically added here -->
+    </LinearLayout>
+    </ScrollView>
 </LinearLayout>
