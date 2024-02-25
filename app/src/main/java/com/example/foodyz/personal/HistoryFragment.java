@@ -39,6 +39,7 @@ public class HistoryFragment extends Fragment {
 
     private String PersonalId;
     private LinearLayout fragmenthistory;
+    private FirebaseFirestore db ;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -63,12 +64,16 @@ public class HistoryFragment extends Fragment {
     @SuppressLint("MissingInflatedId")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
+
+        db = FirebaseFirestore.getInstance();
+
         fragmenthistory = rootView.findViewById(R.id.fragmenthistory);
         if (getArguments() != null) {
             PersonalId = getArguments().getString("PersonalId");
             // Query Firestore and create product buttons
-            queryFirestoreAndCreateButtons();
         }
+        queryFirestoreAndCreateButtons();
+
         return rootView;
     }
 
@@ -76,8 +81,8 @@ public class HistoryFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference OrdersCollection = db.collection("orders");
 
-
-        OrdersCollection.whereEqualTo("personal-id", PersonalId).get().addOnCompleteListener(task -> {
+        // must change the personal-id
+        OrdersCollection.whereEqualTo("personal-id", "fillLater").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 for (QueryDocumentSnapshot document : task.getResult()) {
                     String BusinessName = document.getString("business-id");
@@ -119,9 +124,11 @@ public class HistoryFragment extends Fragment {
             navigateToOrderDetailsFragment(orderIdClicked);
         });
 
+
         // Add the button to the LinearLayout inside the ScrollView
         fragmenthistory.addView(button);
     }
+
 
     private void navigateToOrderDetailsFragment(String orderId) {
         // Log statement to check if the method is called

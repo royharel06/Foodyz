@@ -1,63 +1,114 @@
 package com.example.foodyz.personal;
-
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.foodyz.R;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link Order_Details_Fragment#newInstance} factory method to
- * create an instance of this fragment.
- *
- */
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.example.foodyz.R;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Order_Details_Fragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @return A new instance of fragment BlankFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static Order_Details_Fragment newInstance(String param1) {
-        Order_Details_Fragment fragment = new Order_Details_Fragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private static final String ARG_ORDER_ID = "orderId";
+    private String orderId;
+    private LinearLayout fragmenthistory;
+    private FirebaseFirestore db ;
 
     public Order_Details_Fragment() {
         // Required empty public constructor
+    }
+
+    public static Order_Details_Fragment newInstance(String orderId) {
+        Order_Details_Fragment fragment = new Order_Details_Fragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_ORDER_ID, orderId);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            orderId = getArguments().getString(ARG_ORDER_ID);
         }
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.order_details_fragment, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
+
+        db = FirebaseFirestore.getInstance();
+
+        fragmenthistory = rootView.findViewById(R.id.fragmenthistory);
+        if (getArguments() != null) {
+            orderId = getArguments().getString("orderID");
+            // Query Firestore and create product buttons
+        }
+
+        return rootView;
     }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        // Update UI with order details
+        if (orderId != null) {
+            db.collection("orders-details").whereEqualTo("order-id", orderId).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        String productName = document.getString("product-name");
+                        int quantity = document.getLong("quantity").intValue(); // Convert Long to int
+                        double unitPrice = document.getDouble("unit-price");
+
+                        // Create TextViews to display order details
+                        TextView productTextView = new TextView(requireContext());
+                        productTextView.setText("Product: " + productName);
+
+                        TextView quantityTextView = new TextView(requireContext());
+                        quantityTextView.setText("Quantity: " + quantity);
+
+                        TextView priceTextView = new TextView(requireContext());
+                        priceTextView.setText("Price: " + unitPrice);
+
+                        // Set layout parameters
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT
+                        );
+                        productTextView.setLayoutParams(params);
+                        quantityTextView.setLayoutParams(params);
+                        priceTextView.setLayoutParams(params);
+
+                        // Add TextViews to the LinearLayout
+                        fragmenthistory.addView(productTextView);
+                        fragmenthistory.addView(quantityTextView);
+                        fragmenthistory.addView(priceTextView);
+
+                        // Add more TextViews for other order details as needed
+                    }
+                } else {
+                    // Handle errors
+                    Exception exception = task.getException();
+                    if (exception != null) {
+                        exception.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
 
 }

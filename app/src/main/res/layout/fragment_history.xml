@@ -4,31 +4,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- ListView to display order history -->
-    <ListView
-        android:id="@+id/orderListView"
+    <!-- ScrollView containing LinearLayout for buttons -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="823dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/fragmenthistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <!-- Buttons will be dynamically added here -->
+        </LinearLayout>
+    </ScrollView>
 
     <!-- Fragment container for dynamically replacing fragments -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
-    <!-- ScrollView containing LinearLayout for buttons -->
-    <ScrollView
-        android:layout_below="@id/searchProductEditText"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <LinearLayout
-        android:id="@+id/fragmenthistory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-        <!-- Buttons will be dynamically added here -->
-    </LinearLayout>
-    </ScrollView>
 </LinearLayout>

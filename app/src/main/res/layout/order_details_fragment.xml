@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_container"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <!-- Content of the fragment container -->
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <!-- Order ID -->
+    <TextView
+        android:id="@+id/order_id_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Order ID:"
+        android:textStyle="bold" />
 
-</FrameLayout>
+    <!-- Add more TextViews for other order details, such as business name, date, total cost, etc. -->
+    <!-- Example: -->
+    <TextView
+        android:id="@+id/business_name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Business Name:"
+        android:textStyle="bold" />
+
+    <!-- Add more TextViews for other order details as needed -->
+
+</LinearLayout>
