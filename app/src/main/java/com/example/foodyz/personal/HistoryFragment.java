@@ -1,6 +1,7 @@
 package com.example.foodyz.personal;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -105,12 +106,17 @@ public class HistoryFragment extends Fragment {
             }
         });
     }
-
     private void createButtonWithOrderDetails(String BusinessName, String Date, Double TotalCost, String orderId) {
-        // Create a button
-        Button button = new Button(requireContext());
+        // Get the context
+        Context context = getContext();
+        if (context == null) {
+            return; // Exit if context is null to avoid crashes
+        }
 
-        // Set the text on the button to display business Name ,Date , total-cost
+        // Create a button
+        Button button = new Button(context);
+
+        // Set the text on the button to display business Name, Date, total-cost
         String buttonText = String.format("%s\n%s\n%s ₪", BusinessName, Date, TotalCost);
         button.setText(buttonText);
 
@@ -124,11 +130,9 @@ public class HistoryFragment extends Fragment {
             navigateToOrderDetailsFragment(orderIdClicked);
         });
 
-
         // Add the button to the LinearLayout inside the ScrollView
         fragmenthistory.addView(button);
     }
-
 
     private void navigateToOrderDetailsFragment(String orderId) {
         // Log statement to check if the method is called
@@ -143,4 +147,5 @@ public class HistoryFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
+
 }

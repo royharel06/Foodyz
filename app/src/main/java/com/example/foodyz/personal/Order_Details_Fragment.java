@@ -24,8 +24,6 @@ public class Order_Details_Fragment extends Fragment {
 
     private static final String ARG_ORDER_ID = "orderId";
     private String orderId;
-    private LinearLayout fragmenthistory;
-    private FirebaseFirestore db ;
 
     public Order_Details_Fragment() {
         // Required empty public constructor
@@ -40,75 +38,24 @@ public class Order_Details_Fragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            orderId = getArguments().getString(ARG_ORDER_ID);
-        }
-    }
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_history, container, false);
-
-        db = FirebaseFirestore.getInstance();
-
-        fragmenthistory = rootView.findViewById(R.id.fragmenthistory);
-        if (getArguments() != null) {
-            orderId = getArguments().getString("orderID");
-            // Query Firestore and create product buttons
-        }
-
+        View rootView = inflater.inflate(R.layout.order_details_fragment, container, false);
         return rootView;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Find TextViews in the layout
+        TextView orderIdTextView = view.findViewById(R.id.order_id_text_view);
+        TextView businessNameTextView = view.findViewById(R.id.business_name_text_view);
+        // Find other TextViews for additional order details as needed
+
         // Update UI with order details
         if (orderId != null) {
-            db.collection("orders-details").whereEqualTo("order-id", orderId).get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        String productName = document.getString("product-name");
-                        int quantity = document.getLong("quantity").intValue(); // Convert Long to int
-                        double unitPrice = document.getDouble("unit-price");
-
-                        // Create TextViews to display order details
-                        TextView productTextView = new TextView(requireContext());
-                        productTextView.setText("Product: " + productName);
-
-                        TextView quantityTextView = new TextView(requireContext());
-                        quantityTextView.setText("Quantity: " + quantity);
-
-                        TextView priceTextView = new TextView(requireContext());
-                        priceTextView.setText("Price: " + unitPrice);
-
-                        // Set layout parameters
-                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT
-                        );
-                        productTextView.setLayoutParams(params);
-                        quantityTextView.setLayoutParams(params);
-                        priceTextView.setLayoutParams(params);
-
-                        // Add TextViews to the LinearLayout
-                        fragmenthistory.addView(productTextView);
-                        fragmenthistory.addView(quantityTextView);
-                        fragmenthistory.addView(priceTextView);
-
-                        // Add more TextViews for other order details as needed
-                    }
-                } else {
-                    // Handle errors
-                    Exception exception = task.getException();
-                    if (exception != null) {
-                        exception.printStackTrace();
-                    }
-                }
-            });
+            // Fetch order details from Firestore based on orderId
+            // Update TextViews with order details
         }
     }
-
-
 }
