@@ -77,7 +77,7 @@ public class EditMenuFragment extends Fragment {
         // Reference to your LinearLayout inside the ScrollView
         yourLinearLayout = rootView.findViewById(R.id.yourLinearLayout);
 
-        // Query Firestore and create buttons
+        // Query Firestore and create buttons:
         queryFirestoreAndCreateButtons();
 
         return rootView;
