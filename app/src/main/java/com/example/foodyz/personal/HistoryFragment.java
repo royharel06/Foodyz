@@ -1,6 +1,7 @@
 package com.example.foodyz.personal;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.example.foodyz.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -84,23 +86,46 @@ public class HistoryFragment extends Fragment {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
         String formattedDate = dateFormat.format(date);
 
-        Button button = new Button(requireContext());
-        button.setText(String.format(Locale.getDefault(), "Business: %s\nDate: %s\nStatus: %s\nTotal Cost: %.2f ₪", businessId, formattedDate, status, totalCost));
+        // Query the business name using the business ID
+        db.collection("business-accounts")
+                .whereEqualTo("business-id", businessId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String businessName = document.getString("user-name");
 
-        button.setTag(orderId);
+                            requireActivity().runOnUiThread(() -> {
+                                // Create button for each order with business name
+                                Button button = new Button(requireContext());
+                                button.setText(String.format(Locale.getDefault(), "Business: %s\nDate: %s\nStatus: %s\nTotal Cost: %.2f ₪", businessName, formattedDate, status, totalCost));
+                                button.setTag(orderId);
 
-        // Add an OnClickListener to handle button clicks
-        button.setOnClickListener(v -> {
-            // Handle button click here
-            // Retrieve the order-id from the button's tag
-            String clickedOrderId = (String) v.getTag();
-            // Now you can use the order-id as needed
-            navigateToOrderDetails(clickedOrderId);
-        });
+                                // Add an OnClickListener to handle button clicks
+                                button.setOnClickListener(v -> {
+                                    // Handle button click here
+                                    // Retrieve the order-id from the button's tag
+                                    String clickedOrderId = (String) v.getTag();
+                                    // Now you can use the order-id as needed
+                                    navigateToOrderDetails(clickedOrderId);
+                                });
 
-        // Add the button to your LinearLayout inside the ScrollView
-        yourLinearLayout.addView(button);
+                                // Add the button to your LinearLayout inside the ScrollView
+                                yourLinearLayout.addView(button);
+                            });
+                        }
+                    } else {
+                        // Handle errors
+                        Exception exception = task.getException();
+                        if (exception != null) {
+                            Log.e("HistoryFragment", "Error getting documents", exception);
+                        } else {
+                            Log.e("HistoryFragment", "Error: Task result is not successful");
+                        }
+                    }
+                });
     }
+
 
     private void displayNoResultsMessage() {
         // Create a TextView to display "no results found" message
