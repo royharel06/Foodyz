@@ -100,57 +100,67 @@ public class OrderDetailsFragment extends Fragment {
         rateButton.setOnClickListener(v -> showRatedMessage());
     }
 
-    private boolean alreadyRated = false; // Boolean variable to track if the message box has been generated
+    boolean clickedRate = false;
 
     private void showRatedMessage() {
-        if (!alreadyRated) {
-            // Query the ratings collection to get the user's rating
-            db.collection("ratings")
-                    .whereEqualTo("business-id", businessId)
-                    .whereEqualTo("personal-id", personalId)
-                    .get()
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                            // Get the rating from the document
-                            long rating = task.getResult().getDocuments().get(0).getLong("rating");
-
-                            // Display the rated message
-                            String message = "You already rated " + businessName + " with " + rating + " stars";
-                            TextView ratedTextView = new TextView(requireContext());
-                            ratedTextView.setText(message);
-
-                            // Set text view properties
-                            ratedTextView.setGravity(Gravity.CENTER);
-                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                            params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0);
-                            ratedTextView.setLayoutParams(params);
-
-                            // Add the TextView to the layout
-                            ((LinearLayout) requireView()).addView(ratedTextView);
-
-                            // Create and add the Update button
-                            Button updateButton = new Button(requireContext());
-                            updateButton.setText("Update " + businessName + " rating");
-                            updateButton.setTextColor(getResources().getColor(android.R.color.white)); // Apply text color
-                            updateButton.setPadding(16, 8, 16, 8); // Apply padding
-                            LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                            buttonParams.gravity = Gravity.CENTER; // Center the button
-                            buttonParams.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0); // Add top margin
-                            updateButton.setLayoutParams(buttonParams); // Apply layout parameters
-                            updateButton.setOnClickListener(v -> showUpdateRatingDialog());
-                            ((LinearLayout) requireView()).addView(updateButton);
-
-                            // Set alreadyRated to true to prevent multiple messages
-                            alreadyRated = true;
+        // Query the ratings collection to get the user's rating
+        db.collection("ratings")
+                .whereEqualTo("business-id", businessId)
+                .whereEqualTo("personal-id", personalId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        // Get the rating from the document
+                        long rating = task.getResult().getDocuments().get(0).getLong("rating");
+                        // Display the rated message and update button
+                        if(!(clickedRate)) {
+                            displayRatedMessage(rating);
+                            clickedRate = true;
                         }
-                    });
-        }
+                    } else {
+                        // User has not rated the business yet
+                        if(!(clickedRate)) {
+                            showRatingDialog();
+                            clickedRate = true;
+                        }
+                    }
+                });
     }
+
+
+    private void displayRatedMessage(long rating) {
+        // Display the rated message
+        String message = "You already rated " + businessName + " with " + rating + " stars";
+        TextView ratedTextView = new TextView(requireContext());
+        ratedTextView.setText(message);
+
+        // Set text view properties
+        ratedTextView.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0);
+        ratedTextView.setLayoutParams(params);
+
+        // Add the TextView to the layout
+        ((LinearLayout) requireView()).addView(ratedTextView);
+
+        // Create and add the Update button
+        Button updateButton = new Button(requireContext());
+        updateButton.setText("Update " + businessName + " rating");
+        updateButton.setTextColor(getResources().getColor(android.R.color.white)); // Apply text color
+        updateButton.setPadding(16, 8, 16, 8); // Apply padding
+        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        buttonParams.gravity = Gravity.CENTER; // Center the button
+        buttonParams.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0); // Add top margin
+        updateButton.setLayoutParams(buttonParams); // Apply layout parameters
+        updateButton.setOnClickListener(v -> showUpdateRatingDialog());
+        ((LinearLayout) requireView()).addView(updateButton);
+    }
+
 
 
     private void showRatingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Rate This Business");
+        builder.setTitle("Rate " + businessName);
 
         // Create a RatingBar programmatically
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null);
@@ -171,6 +181,7 @@ public class OrderDetailsFragment extends Fragment {
 
         builder.show();
     }
+
 
     private void showUpdateRatingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -194,24 +205,6 @@ public class OrderDetailsFragment extends Fragment {
         });
 
         builder.show();
-    }
-
-    private void addRatingToFirestore(long rating) {
-        // Create a new document in "ratings" collection
-        Map<String, Object> ratingData = new HashMap<>();
-        ratingData.put("business-id", businessId);
-        ratingData.put("personal-id", personalId);
-        ratingData.put("rating", rating);
-
-        db.collection("ratings").add(ratingData)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(requireContext(), "Rating submitted successfully", Toast.LENGTH_SHORT).show();
-                    // Navigate to main activity fragment after rating
-                    navigateToMainActivity();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(requireContext(), "Failed to submit rating: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
     }
 
     private void updateRatingInFirestore(long newRating) {
@@ -238,6 +231,25 @@ public class OrderDetailsFragment extends Fragment {
                     }
                 });
     }
+
+    private void addRatingToFirestore(long rating) {
+        // Create a new document in "ratings" collection
+        Map<String, Object> ratingData = new HashMap<>();
+        ratingData.put("business-id", businessId);
+        ratingData.put("personal-id", personalId);
+        ratingData.put("rating", rating);
+
+        db.collection("ratings").add(ratingData)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(requireContext(), "Rating submitted successfully", Toast.LENGTH_SHORT).show();
+                    // Navigate to main activity fragment after rating
+                    navigateToMainActivity();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Failed to submit rating: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
 
     private void navigateToMainActivity() {
         // Create an instance of Personal_MainActivity
