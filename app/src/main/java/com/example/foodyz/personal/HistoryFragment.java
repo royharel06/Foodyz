@@ -107,7 +107,7 @@ public class HistoryFragment extends Fragment {
                                     // Retrieve the order-id from the button's tag
                                     String clickedOrderId = (String) v.getTag();
                                     // Now you can use the order-id as needed
-                                    navigateToOrderDetails(clickedOrderId,businessName);
+                                    navigateToOrderDetails(clickedOrderId,businessId,businessName);
                                 });
 
                                 // Add the button to your LinearLayout inside the ScrollView
@@ -137,9 +137,9 @@ public class HistoryFragment extends Fragment {
         yourLinearLayout.addView(noResultsTextView);
     }
 
-    private void navigateToOrderDetails(String orderId, String businessName) {
-        // Create an instance of OrderDetailsFragment with the selected order-id and business name
-        OrderDetailsFragment orderDetailsFragment = OrderDetailsFragment.newInstance(orderId, businessName);
+    private void navigateToOrderDetails(String orderId, String businessId, String businessName) {
+        // Create an instance of OrderDetailsFragment with the selected order-id, business id, and business name
+        OrderDetailsFragment orderDetailsFragment = OrderDetailsFragment.newInstance(orderId, businessId, businessName);
 
         // Replace the current fragment with OrderDetailsFragment
         getParentFragmentManager().beginTransaction()
@@ -147,5 +147,6 @@ public class HistoryFragment extends Fragment {
                 .addToBackStack(null)
                 .commit();
     }
+
 
 }
