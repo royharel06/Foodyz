@@ -3,6 +3,7 @@ package com.example.foodyz.personal;
 import android.app.AlertDialog;
 import android.media.Rating;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,6 +99,8 @@ public class OrderDetailsFragment extends Fragment {
         rateButton.setOnClickListener(v -> showRatingDialog());
     }
 
+    private boolean alreadyRated = false; // Boolean variable to track if the message box has been generated
+
     private void showRatingDialog() {
         // Check if the user has already rated the business
         db.collection("ratings")
@@ -107,7 +110,7 @@ public class OrderDetailsFragment extends Fragment {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
                         // User has already rated the business
-                        Toast.makeText(requireContext(), "You already rated " + businessName, Toast.LENGTH_SHORT).show();
+                        showRatedMessage();
                     } else {
                         // User has not rated the business yet, show the rating dialog
                         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -120,7 +123,7 @@ public class OrderDetailsFragment extends Fragment {
                         builder.setPositiveButton("Submit", (dialog, which) -> {
                             // Handle submit button click
                             RatingBar ratingBar = dialogView.findViewById(R.id.ratingBarDialog);
-                            float rating = ratingBar.getRating();
+                            long rating = (long) ratingBar.getRating();
                             // Add rating to Firestore
                             addRatingToFirestore(rating);
                         });
@@ -135,8 +138,42 @@ public class OrderDetailsFragment extends Fragment {
                 });
     }
 
+    private void showRatedMessage() {
+        if (!alreadyRated) {
+            // Query the ratings collection to get the user's rating
+            db.collection("ratings")
+                    .whereEqualTo("business-id", businessId)
+                    .whereEqualTo("personal-id", personalId)
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                            // Get the rating from the document
+                            long rating = task.getResult().getDocuments().get(0).getLong("rating");
 
-    private void addRatingToFirestore(float rating) {
+                            // Display the rated message
+                            String message = "You already rated " + businessName + " with " + rating + " stars";
+                            TextView ratedTextView = new TextView(requireContext());
+                            ratedTextView.setText(message);
+
+                            // Set text view properties
+                            ratedTextView.setGravity(Gravity.CENTER);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0);
+                            ratedTextView.setLayoutParams(params);
+
+                            // Add the TextView to the layout
+                            ((LinearLayout) requireView()).addView(ratedTextView);
+
+                            // Set alreadyRated to true to prevent multiple messages
+                            alreadyRated = true;
+                        }
+                    });
+        }
+    }
+
+
+
+    private void addRatingToFirestore(long rating) {
         // Create a new document in "ratings" collection
         Map<String, Object> ratingData = new HashMap<>();
         ratingData.put("business-id", businessId); // Assuming orderId is the business ID
