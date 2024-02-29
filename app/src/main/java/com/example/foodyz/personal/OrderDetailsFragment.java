@@ -1,6 +1,7 @@
 package com.example.foodyz.personal;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.media.Rating;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -96,47 +97,10 @@ public class OrderDetailsFragment extends Fragment {
         // Button to rate the business
         Button rateButton = view.findViewById(R.id.rateButton);
         rateButton.setText("Rate " + businessName); // Update button text with business name
-        rateButton.setOnClickListener(v -> showRatingDialog());
+        rateButton.setOnClickListener(v -> showRatedMessage());
     }
 
     private boolean alreadyRated = false; // Boolean variable to track if the message box has been generated
-
-    private void showRatingDialog() {
-        // Check if the user has already rated the business
-        db.collection("ratings")
-                .whereEqualTo("business-id", businessId)
-                .whereEqualTo("personal-id", personalId)
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        // User has already rated the business
-                        showRatedMessage();
-                    } else {
-                        // User has not rated the business yet, show the rating dialog
-                        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                        builder.setTitle("Rate This Business");
-
-                        // Create a RatingBar programmatically
-                        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null);
-                        builder.setView(dialogView);
-
-                        builder.setPositiveButton("Submit", (dialog, which) -> {
-                            // Handle submit button click
-                            RatingBar ratingBar = dialogView.findViewById(R.id.ratingBarDialog);
-                            long rating = (long) ratingBar.getRating();
-                            // Add rating to Firestore
-                            addRatingToFirestore(rating);
-                        });
-
-                        builder.setNegativeButton("Cancel", (dialog, which) -> {
-                            // Handle cancel button click
-                            dialog.dismiss();
-                        });
-
-                        builder.show();
-                    }
-                });
-    }
 
     private void showRatedMessage() {
         if (!alreadyRated) {
@@ -164,6 +128,18 @@ public class OrderDetailsFragment extends Fragment {
                             // Add the TextView to the layout
                             ((LinearLayout) requireView()).addView(ratedTextView);
 
+                            // Create and add the Update button
+                            Button updateButton = new Button(requireContext());
+                            updateButton.setText("Update " + businessName + " rating");
+                            updateButton.setTextColor(getResources().getColor(android.R.color.white)); // Apply text color
+                            updateButton.setPadding(16, 8, 16, 8); // Apply padding
+                            LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                            buttonParams.gravity = Gravity.CENTER; // Center the button
+                            buttonParams.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0); // Add top margin
+                            updateButton.setLayoutParams(buttonParams); // Apply layout parameters
+                            updateButton.setOnClickListener(v -> showUpdateRatingDialog());
+                            ((LinearLayout) requireView()).addView(updateButton);
+
                             // Set alreadyRated to true to prevent multiple messages
                             alreadyRated = true;
                         }
@@ -172,20 +148,102 @@ public class OrderDetailsFragment extends Fragment {
     }
 
 
+    private void showRatingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Rate This Business");
+
+        // Create a RatingBar programmatically
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null);
+        builder.setView(dialogView);
+
+        builder.setPositiveButton("Submit", (dialog, which) -> {
+            // Handle submit button click
+            RatingBar ratingBar = dialogView.findViewById(R.id.ratingBarDialog);
+            long rating = (long) ratingBar.getRating();
+            // Add rating to Firestore
+            addRatingToFirestore(rating);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            // Handle cancel button click
+            dialog.dismiss();
+        });
+
+        builder.show();
+    }
+
+    private void showUpdateRatingDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle("Update Rating for " + businessName);
+
+        // Create a RatingBar programmatically
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null);
+        builder.setView(dialogView);
+
+        builder.setPositiveButton("Submit", (dialog, which) -> {
+            // Handle submit button click
+            RatingBar ratingBar = dialogView.findViewById(R.id.ratingBarDialog);
+            long newRating = (long) ratingBar.getRating();
+            // Update rating in Firestore
+            updateRatingInFirestore(newRating);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> {
+            // Handle cancel button click
+            dialog.dismiss();
+        });
+
+        builder.show();
+    }
 
     private void addRatingToFirestore(long rating) {
         // Create a new document in "ratings" collection
         Map<String, Object> ratingData = new HashMap<>();
-        ratingData.put("business-id", businessId); // Assuming orderId is the business ID
+        ratingData.put("business-id", businessId);
         ratingData.put("personal-id", personalId);
         ratingData.put("rating", rating);
 
         db.collection("ratings").add(ratingData)
                 .addOnSuccessListener(documentReference -> {
                     Toast.makeText(requireContext(), "Rating submitted successfully", Toast.LENGTH_SHORT).show();
+                    // Navigate to main activity fragment after rating
+                    navigateToMainActivity();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(requireContext(), "Failed to submit rating: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
+    private void updateRatingInFirestore(long newRating) {
+        // Query the ratings collection to get the document ID of the existing rating
+        db.collection("ratings")
+                .whereEqualTo("business-id", businessId)
+                .whereEqualTo("personal-id", personalId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        // Get the document ID of the existing rating
+                        String ratingId = task.getResult().getDocuments().get(0).getId();
+                        // Update the rating in Firestore
+                        db.collection("ratings").document(ratingId)
+                                .update("rating", newRating)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(requireContext(), "Rating updated successfully", Toast.LENGTH_SHORT).show();
+                                    // Navigate to main activity fragment after updating rating
+                                    navigateToMainActivity();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(requireContext(), "Failed to update rating: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                });
+    }
+
+    private void navigateToMainActivity() {
+        // Create an instance of Personal_MainActivity
+        Intent intent = new Intent(requireContext(), Personal_MainActivity.class);
+        startActivity(intent);
+        requireActivity().finish(); // Close the current activity
+    }
+
 }
