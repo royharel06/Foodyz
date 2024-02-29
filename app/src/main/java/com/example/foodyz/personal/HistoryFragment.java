@@ -139,7 +139,7 @@ public class HistoryFragment extends Fragment {
 
     private void navigateToOrderDetails(String orderId) {
         // Create an instance of OrderDetailsFragment with the selected order id
-        Order_Details_Fragment orderDetailsFragment = Order_Details_Fragment.newInstance(orderId);
+        OrderDetailsFragment orderDetailsFragment = OrderDetailsFragment.newInstance(orderId);
 
         // Replace the current fragment with OrderDetailsFragment
         getParentFragmentManager().beginTransaction()

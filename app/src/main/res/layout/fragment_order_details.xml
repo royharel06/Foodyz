@@ -3,23 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:gravity="center">
 
-    <!-- Order ID -->
+    <!-- TextView to display order details -->
     <TextView
-        android:id="@+id/order_id_text_view"
+        android:id="@+id/orderDetailsTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold" />
+        android:textSize="18sp"
+        android:padding="16dp"
+        android:gravity="center"/>
 
-    <!-- Add more TextViews for other order details, such as business name, date, total cost, etc. -->
-    <!-- Example: -->
-    <TextView
-        android:id="@+id/business_name_text_view"
+    <!-- Button to rate the business -->
+    <Button
+        android:id="@+id/rateButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold" />
-
-    <!-- Add more TextViews for other order details as needed -->
+        android:text="Rate This Business"
+        android:layout_marginTop="16dp"/>
 
 </LinearLayout>
