@@ -99,28 +99,42 @@ public class OrderDetailsFragment extends Fragment {
     }
 
     private void showRatingDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Rate This Business");
+        // Check if the user has already rated the business
+        db.collection("ratings")
+                .whereEqualTo("business-id", businessId)
+                .whereEqualTo("personal-id", personalId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        // User has already rated the business
+                        Toast.makeText(requireContext(), "You already rated " + businessName, Toast.LENGTH_SHORT).show();
+                    } else {
+                        // User has not rated the business yet, show the rating dialog
+                        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                        builder.setTitle("Rate This Business");
 
-        // Create a RatingBar programmatically
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null);
-        builder.setView(dialogView);
+                        // Create a RatingBar programmatically
+                        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null);
+                        builder.setView(dialogView);
 
-        builder.setPositiveButton("Submit", (dialog, which) -> {
-            // Handle submit button click
-            RatingBar ratingBar = dialogView.findViewById(R.id.ratingBarDialog);
-            float rating = ratingBar.getRating();
-            // Add rating to Firestore
-            addRatingToFirestore(rating);
-        });
+                        builder.setPositiveButton("Submit", (dialog, which) -> {
+                            // Handle submit button click
+                            RatingBar ratingBar = dialogView.findViewById(R.id.ratingBarDialog);
+                            float rating = ratingBar.getRating();
+                            // Add rating to Firestore
+                            addRatingToFirestore(rating);
+                        });
 
-        builder.setNegativeButton("Cancel", (dialog, which) -> {
-            // Handle cancel button click
-            dialog.dismiss();
-        });
+                        builder.setNegativeButton("Cancel", (dialog, which) -> {
+                            // Handle cancel button click
+                            dialog.dismiss();
+                        });
 
-        builder.show();
+                        builder.show();
+                    }
+                });
     }
+
 
     private void addRatingToFirestore(float rating) {
         // Create a new document in "ratings" collection
