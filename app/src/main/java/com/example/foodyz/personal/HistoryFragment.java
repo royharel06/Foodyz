@@ -1,117 +1,124 @@
 package com.example.foodyz.personal;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.foodyz.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HistoryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class HistoryFragment extends Fragment {
 
-    private String PersonalId;
-    private LinearLayout fragmenthistory;
+    private LinearLayout yourLinearLayout;
     private FirebaseFirestore db;
-
-    public HistoryFragment() {
-        // Required empty public constructor
-    }
-
-    public static HistoryFragment newInstance(String PersonalId) {
-        HistoryFragment fragment = new HistoryFragment();
-        Bundle args = new Bundle();
-        args.putString("PersonalId", PersonalId);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private FirebaseUser currentUser;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.PersonalId = getArguments().getString("PersonalId");
-        }
-    }
-
-    @SuppressLint("MissingInflatedId")
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_history, container, false);
 
         db = FirebaseFirestore.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        yourLinearLayout = rootView.findViewById(R.id.yourLinearLayout);
 
-        fragmenthistory = rootView.findViewById(R.id.fragmenthistory);
+        // Initial query to fetch orders
         queryFirestoreAndCreateButtons();
 
         return rootView;
     }
 
     private void queryFirestoreAndCreateButtons() {
-        CollectionReference OrdersCollection = db.collection("orders");
+        CollectionReference ordersCollection = db.collection("orders");
 
-        OrdersCollection.whereEqualTo("personal-id", PersonalId).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                for (QueryDocumentSnapshot document : task.getResult()) {
-                    String BusinessName = document.getString("business-id");
-                    String Date = document.getString("date"); // Assuming date is stored as string, adjust accordingly
-                    Double Price = document.getDouble("total-cost");
-                    String orderId = document.getId(); // Get the order id
+        ordersCollection.whereEqualTo("personal-id", currentUser.getUid())
+                .get()
+                .addOnCompleteListener(task -> {
+                    yourLinearLayout.removeAllViews(); // Clear previous buttons
 
-                    createButtonWithOrderDetails(BusinessName, Date, Price, orderId);
-                }
-            } else {
-                // Handle errors
-                Exception exception = task.getException();
-                if (exception != null) {
-                    exception.printStackTrace();
-                }
-            }
-        });
+                    boolean hasResults = false; // Flag to track if any orders are found
+
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String orderId = document.getId();
+                            String businessId = document.getString("business-id");
+                            Date date = document.getDate("date");
+                            String status = document.getString("status");
+                            double totalCost = document.getDouble("total-cost");
+
+                            // Create button for each order
+                            createButtonForOrder(orderId, businessId, date, status, totalCost);
+                            hasResults = true; // Set flag to true as matching orders are found
+                        }
+                    } else {
+                        // Handle errors
+                        Exception exception = task.getException();
+                        if (exception != null) {
+                            exception.printStackTrace();
+                        }
+                    }
+
+                    // Display "no results found" message if no matching orders are found
+                    if (!hasResults) {
+                        displayNoResultsMessage();
+                    }
+                });
     }
 
-    private void createButtonWithOrderDetails(String BusinessName, String Date, Double TotalCost, String orderId) {
-        Context context = getContext();
-        if (context == null) {
-            return;
-        }
+    private void createButtonForOrder(String orderId, String businessId, Date date, String status, double totalCost) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
+        String formattedDate = dateFormat.format(date);
 
-        Button button = new Button(context);
-
-        String buttonText = String.format("%s\n%s\n%s ₪", BusinessName, Date, TotalCost);
-        button.setText(buttonText);
+        Button button = new Button(requireContext());
+        button.setText(String.format(Locale.getDefault(), "Business: %s\nDate: %s\nStatus: %s\nTotal Cost: %.2f ₪", businessId, formattedDate, status, totalCost));
 
         button.setTag(orderId);
 
+        // Add an OnClickListener to handle button clicks
         button.setOnClickListener(v -> {
-            String orderIdClicked = (String) v.getTag();
-            navigateToOrderDetailsFragment(orderIdClicked);
+            // Handle button click here
+            // Retrieve the order-id from the button's tag
+            String clickedOrderId = (String) v.getTag();
+            // Now you can use the order-id as needed
+            navigateToOrderDetails(clickedOrderId);
         });
 
-        fragmenthistory.addView(button);
+        // Add the button to your LinearLayout inside the ScrollView
+        yourLinearLayout.addView(button);
     }
 
-    private void navigateToOrderDetailsFragment(String orderId) {
-        Log.d("HistoryFragment", "Navigating to OrderDetailsFragment");
+    private void displayNoResultsMessage() {
+        // Create a TextView to display "no results found" message
+        TextView noResultsTextView = new TextView(requireContext());
+        noResultsTextView.setText("No orders found");
+        noResultsTextView.setGravity(Gravity.CENTER);
 
-        Order_Details_Fragment fragment = Order_Details_Fragment.newInstance(orderId);
+        // Add the TextView to your LinearLayout inside the ScrollView
+        yourLinearLayout.addView(noResultsTextView);
+    }
 
+    private void navigateToOrderDetails(String orderId) {
+        // Create an instance of OrderDetailsFragment with the selected order id
+        Order_Details_Fragment orderDetailsFragment = Order_Details_Fragment.newInstance(orderId);
+
+        // Replace the current fragment with OrderDetailsFragment
         getParentFragmentManager().beginTransaction()
-                .replace(R.id.personal_frame_layout, fragment)
+                .replace(R.id.personal_frame_layout, orderDetailsFragment)
                 .addToBackStack(null)
                 .commit();
     }
