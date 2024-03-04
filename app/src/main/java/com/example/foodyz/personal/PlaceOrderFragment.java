@@ -1,8 +1,20 @@
 package com.example.foodyz.personal;
-
+import android.graphics.Paint;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
+import android.text.style.AbsoluteSizeSpan;
+import android.widget.LinearLayout.LayoutParams;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +22,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.foodyz.R;
@@ -141,9 +155,42 @@ public class PlaceOrderFragment extends Fragment {
         // Create a button
         Button button = new Button(requireContext());
 
-        // Set the text on the button to display product name, details, and price
-        String buttonText = String.format("%s\n%s\n%s ₪", productName, productDetails, unitPrice);
-        button.setText(buttonText);
+        // Format the button text with empty lines between variables
+        String buttonText = String.format("%s\n\n%s\n\n%.2f ₪", productName, productDetails, unitPrice);
+        SpannableStringBuilder spannableText = new SpannableStringBuilder(buttonText);
+
+        // Set the colors for text and background
+        button.setTextColor(Color.WHITE);
+        button.setBackgroundColor(Color.BLACK);
+
+        // Set the unit price and shekel sign color
+        String unitPriceString = String.format("%.2f", unitPrice);
+        int startPrice = buttonText.lastIndexOf(unitPriceString);
+        int endPrice = startPrice + unitPriceString.length();
+        int startShekel = buttonText.indexOf("₪");
+        int endShekel = startShekel + 1;
+
+        spannableText.setSpan(new ForegroundColorSpan(Color.CYAN), startPrice, endPrice, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableText.setSpan(new ForegroundColorSpan(Color.CYAN), startShekel, endShekel, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Set the product details color
+        int startDetails = buttonText.indexOf(productDetails);
+        int endDetails = startDetails + productDetails.length();
+        spannableText.setSpan(new ForegroundColorSpan(Color.GRAY), startDetails, endDetails, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        // Set bold style for product name and increase text size
+        StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD);
+        spannableText.setSpan(boldSpan, 0, productName.length(), SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableText.setSpan(new AbsoluteSizeSpan(24, true), 0, productName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Adjust the text size as needed
+
+        // Set the formatted text to the button
+        button.setText(spannableText);
+
+        // Set textAllCaps to false
+        button.setAllCaps(false);
+
+        // Set text alignment to start
+        button.setGravity(Gravity.START);
 
         // Add an OnClickListener to handle button clicks
         button.setOnClickListener(v -> {
@@ -153,7 +200,21 @@ public class PlaceOrderFragment extends Fragment {
 
         // Add the button to the LinearLayout inside the ScrollView
         placeOrderLinearLayout.addView(button);
+
+        // Add space below the button
+        View space = new View(requireContext());
+        space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 64)); // Adjust the space height as needed
+        placeOrderLinearLayout.addView(space);
+
+        // Add a gray border below the button
+        View border = new View(requireContext());
+        border.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 8)); // Adjust the border height as needed
+        border.setBackgroundColor(Color.GRAY);
+        placeOrderLinearLayout.addView(border);
     }
+
+
+
 
     private void navigateToCompleteOrder(String businessId, List<String> selectedProducts) {
         // Create an instance of CompleteOrderFragment with the selected products and businessId
