@@ -259,6 +259,11 @@ public class PlaceOrderFragment extends Fragment {
         quantityPicker.setMinValue(1);
         quantityPicker.setMaxValue(10);
 
+        // Set the message
+        TextView messageTextView = dialogView.findViewById(R.id.messageTextView);
+        String message = "How many " + productName + " would you like to order?";
+        messageTextView.setText(message);
+
         // Build the dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setView(dialogView);
@@ -279,6 +284,7 @@ public class PlaceOrderFragment extends Fragment {
         // Show the dialog
         dialog.show();
     }
+
 
 
 
