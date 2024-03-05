@@ -157,13 +157,16 @@ public class PlaceOrderFragment extends Fragment {
         // Create a TextView for displaying "No Results Found" message
         TextView noResultsTextView = new TextView(requireContext());
         noResultsTextView.setText("No Results Found");
-        noResultsTextView.setTextSize(18); // Adjust text size if needed
+        noResultsTextView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18); // Set text size to 18sp
+        noResultsTextView.setTextColor(Color.WHITE); // Set text color to white
+        noResultsTextView.setTypeface(null, Typeface.BOLD); // Set text style to bold
         noResultsTextView.setGravity(Gravity.CENTER); // Center the text horizontally
         noResultsTextView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         // Add the TextView to the LinearLayout inside the ScrollView
         placeOrderLinearLayout.addView(noResultsTextView);
     }
+
 
 
     private void createMenuProduct(String productName, String productDetails, Double unitPrice, String imageUrl) {
