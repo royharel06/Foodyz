@@ -32,15 +32,15 @@
     <!-- TextView for the order creation -->
     <TextView
         android:id="@+id/orderTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/searchProductEditText"
         android:layout_alignParentEnd="true"
-        android:text="Create your order!"
-        android:textSize="24sp"
-        android:textColor="@android:color/white"
         android:padding="16dp"
-        android:textStyle="bold"/>
+        android:text="Create your order!"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <!-- ScrollView containing LinearLayout for buttons -->
     <ScrollView

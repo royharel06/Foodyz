@@ -325,9 +325,15 @@ public class PlaceOrderFragment extends Fragment {
 
         // Add an OnClickListener to handle button clicks
         completeOrderButton.setOnClickListener(v -> {
-            // Navigate to CompleteOrderFragment when "Complete Order" button is clicked
-            navigateToCompleteOrder(businessId, selectedProducts);
+            if (selectedProducts != null && !selectedProducts.isEmpty()) {
+                // Navigate to CompleteOrderFragment when "Complete Order" button is clicked
+                navigateToCompleteOrder(businessId, selectedProducts);
+            } else {
+                // Show message if no products were selected
+                Toast.makeText(requireContext(), "No products were selected!", Toast.LENGTH_SHORT).show();
+            }
         });
+
 
         // Add the "Complete Order" button to the LinearLayout inside the ScrollView
         placeOrderLinearLayout.addView(completeOrderButton);
