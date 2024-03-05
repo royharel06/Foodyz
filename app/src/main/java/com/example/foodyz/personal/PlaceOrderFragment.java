@@ -1,8 +1,13 @@
 package com.example.foodyz.personal;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.text.style.AbsoluteSizeSpan;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.graphics.Color;
@@ -23,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +42,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.foodyz.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -123,7 +130,7 @@ public class PlaceOrderFragment extends Fragment {
                     // Check if the product name contains the search text (case insensitive)
                     if (productName.toLowerCase().contains(searchText.toLowerCase())) {
                         // Call the updated function with additional information
-                        createButtonWithProductName(productName, productDetails, unitPrice, imageUrl); // Pass the image URL
+                        createMenuProduct(productName, productDetails, unitPrice, imageUrl); // Pass the image URL
                         foundResults.set(true); // Set flag to true if a product is found
                     }
                 }
@@ -158,86 +165,77 @@ public class PlaceOrderFragment extends Fragment {
     }
 
 
-    private void createButtonWithProductName(String productName, String productDetails, Double unitPrice, String imageUrl) {
-        // Create a linear layout to hold the button and image
+    private void createMenuProduct(String productName, String productDetails, Double unitPrice, String imageUrl) {
+        // Create a linear layout to hold the text, image, and plus icon
         LinearLayout linearLayout = new LinearLayout(requireContext());
         linearLayout.setOrientation(LinearLayout.HORIZONTAL);
         linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-        // Create the button
-        Button button = new Button(requireContext());
-
-        // Format the button text with empty lines between variables
+        // Create the text view
+        TextView textView = new TextView(requireContext());
         String buttonText = String.format("%s\n\n%s\n\n%.2f ₪", productName, productDetails, unitPrice);
         SpannableStringBuilder spannableText = new SpannableStringBuilder(buttonText);
-
-        // Set the colors for text and background
-        button.setTextColor(Color.WHITE);
-        button.setBackgroundColor(Color.BLACK); // Change the background color of the button
-
-        // Set the unit price and shekel sign color
-        String unitPriceString = String.format("%.2f", unitPrice);
-        int startPrice = buttonText.lastIndexOf(unitPriceString);
-        int endPrice = startPrice + unitPriceString.length();
+        int startPrice = buttonText.lastIndexOf(String.format("%.2f", unitPrice));
+        int endPrice = startPrice + String.format("%.2f", unitPrice).length();
         int startShekel = buttonText.indexOf("₪");
         int endShekel = startShekel + 1;
-
-        spannableText.setSpan(new ForegroundColorSpan(Color.CYAN), startPrice, endPrice, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableText.setSpan(new ForegroundColorSpan(Color.CYAN), startShekel, endShekel, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        // Set the product details color
+        spannableText.setSpan(new ForegroundColorSpan(Color.CYAN), startPrice, endPrice, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableText.setSpan(new ForegroundColorSpan(Color.CYAN), startShekel, endShekel, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         int startDetails = buttonText.indexOf(productDetails);
         int endDetails = startDetails + productDetails.length();
-        spannableText.setSpan(new ForegroundColorSpan(Color.GRAY), startDetails, endDetails, SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        // Set bold style for product name and increase text size
+        spannableText.setSpan(new ForegroundColorSpan(Color.GRAY), startDetails, endDetails, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD);
-        spannableText.setSpan(boldSpan, 0, productName.length(), SpannableStringBuilder.SPAN_EXCLUSIVE_EXCLUSIVE);
-        spannableText.setSpan(new AbsoluteSizeSpan(24, true), 0, productName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE); // Adjust the text size as needed
+        spannableText.setSpan(boldSpan, 0, productName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        spannableText.setSpan(new AbsoluteSizeSpan(24, true), 0, productName.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        textView.setText(spannableText);
+        textView.setTextColor(Color.WHITE);
+        textView.setBackgroundColor(Color.BLACK);
+        textView.setPadding(16, 16, 16, 16);
+        textView.setGravity(Gravity.CENTER_VERTICAL);
 
-        // Set the formatted text to the button
-        button.setText(spannableText);
-
-        // Set textAllCaps to false
-        button.setAllCaps(false);
-
-        // Set text alignment to start
-        button.setGravity(Gravity.START);
-
-        // Add an OnClickListener to handle button clicks
-        button.setOnClickListener(v -> {
-            // Handle button click here
-            addProductToOrderList(productName);
-        });
-
-        // Add the button to the linear layout
-        LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
-        linearLayout.addView(button, buttonLayoutParams);
-
-        // Load the image using Glide or Picasso
+        // Create the image view
         ImageView imageView = new ImageView(requireContext());
         Glide.with(requireContext())
                 .load(imageUrl)
                 .placeholder(R.drawable.loading_placeholder) // Placeholder image while loading
                 .error(android.R.drawable.ic_dialog_alert) // Error image if loading fails
                 .override(500, 500) // Adjust the size of the image
+                .transform(new RoundedCorners(30)) // Apply rounded corners
                 .into(imageView);
 
-        // Add the ImageView to the linear layout
+        // Set layout params for image view
         LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+        imageLayoutParams.setMargins(0, 0, 20, 0); // Set right margin to create space between image and plus icon
+
+        // Create the plus icon
+        ImageView plusIcon = new ImageView(requireContext());
+        plusIcon.setImageResource(R.drawable.baseline_add_circle_outline_24); // Plus icon
+        plusIcon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.bright_cyan)); // Set icon color
+        plusIcon.setOnClickListener(v -> {
+            // Show dialog when plus icon is clicked
+            showDialogToAddToOrder(productName);
+        });
+
+        // Set layout params for plus icon
+        LinearLayout.LayoutParams plusIconLayoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        plusIconLayoutParams.gravity = Gravity.END;
+
+        // Add views to the linear layout
+        linearLayout.addView(textView);
         linearLayout.addView(imageView, imageLayoutParams);
+        linearLayout.addView(plusIcon, plusIconLayoutParams);
 
         // Add the linear layout to the parent layout
         placeOrderLinearLayout.addView(linearLayout);
 
-        // Add space below the button and image
+        // Add space below the text, image, and plus icon
         View space = new View(requireContext());
-        space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 64)); // Adjust the space height as needed
+        space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 64));
         placeOrderLinearLayout.addView(space);
 
-        // Add a gray border below the button and image
+        // Add a gray border below the text, image, and plus icon
         View border = new View(requireContext());
-        border.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 8)); // Adjust the border height as needed
+        border.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 8));
         border.setBackgroundColor(Color.GRAY);
         placeOrderLinearLayout.addView(border);
     }
@@ -245,6 +243,35 @@ public class PlaceOrderFragment extends Fragment {
 
 
 
+    private void showDialogToAddToOrder(String productName) {
+        // Inflate the dialog layout
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_quantity_selection, null);
+
+        // Initialize number picker
+        NumberPicker quantityPicker = dialogView.findViewById(R.id.quantityPicker);
+        quantityPicker.setMinValue(1);
+        quantityPicker.setMaxValue(10);
+
+        // Build the dialog
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setView(dialogView);
+        AlertDialog dialog = builder.create();
+
+        // Handle button clicks
+        Button btnCancel = dialogView.findViewById(R.id.btnCancel);
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+
+        Button btnSubmit = dialogView.findViewById(R.id.btnSubmit);
+        btnSubmit.setOnClickListener(v -> {
+            int quantity = quantityPicker.getValue();
+            addProductToOrderList(productName, quantity);
+            dialog.dismiss();
+            Toast.makeText(requireContext(), "Added " + quantity + " " + productName + " to your order!", Toast.LENGTH_SHORT).show();
+        });
+
+        // Show the dialog
+        dialog.show();
+    }
 
 
 
@@ -274,11 +301,11 @@ public class PlaceOrderFragment extends Fragment {
         placeOrderLinearLayout.addView(completeOrderButton);
     }
 
-    private void addProductToOrderList(String productName) {
+    private void addProductToOrderList(String productName, int quantity) {
         // Add the selected product to the order list
-        selectedProducts.add(productName);
-
-        // Optionally, you can update the UI or perform any other actions based on the selected product
-        Toast.makeText(requireContext(), "Product added to order list: " + productName, Toast.LENGTH_SHORT).show();
+        for (int i = 0; i < quantity; i++) {
+            selectedProducts.add(productName);
+        }
     }
+
 }
