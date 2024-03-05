@@ -3,6 +3,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.text.style.AbsoluteSizeSpan;
+import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -28,9 +29,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.foodyz.R;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -113,11 +118,12 @@ public class PlaceOrderFragment extends Fragment {
                     String productName = document.getString("product-name");
                     String productDetails = document.getString("product-details");
                     Double unitPrice = document.getDouble("product-price");
+                    String imageUrl = document.getString("imageURL"); // Retrieve the image URL from Firestore
 
                     // Check if the product name contains the search text (case insensitive)
                     if (productName.toLowerCase().contains(searchText.toLowerCase())) {
                         // Call the updated function with additional information
-                        createButtonWithProductName(productName, productDetails, unitPrice);
+                        createButtonWithProductName(productName, productDetails, unitPrice, imageUrl); // Pass the image URL
                         foundResults.set(true); // Set flag to true if a product is found
                     }
                 }
@@ -138,6 +144,7 @@ public class PlaceOrderFragment extends Fragment {
         });
     }
 
+
     private void createNoResultsMessage() {
         // Create a TextView for displaying "No Results Found" message
         TextView noResultsTextView = new TextView(requireContext());
@@ -151,8 +158,13 @@ public class PlaceOrderFragment extends Fragment {
     }
 
 
-    private void createButtonWithProductName(String productName, String productDetails, Double unitPrice) {
-        // Create a button
+    private void createButtonWithProductName(String productName, String productDetails, Double unitPrice, String imageUrl) {
+        // Create a linear layout to hold the button and image
+        LinearLayout linearLayout = new LinearLayout(requireContext());
+        linearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+        // Create the button
         Button button = new Button(requireContext());
 
         // Format the button text with empty lines between variables
@@ -161,7 +173,7 @@ public class PlaceOrderFragment extends Fragment {
 
         // Set the colors for text and background
         button.setTextColor(Color.WHITE);
-        button.setBackgroundColor(Color.BLACK);
+        button.setBackgroundColor(Color.BLACK); // Change the background color of the button
 
         // Set the unit price and shekel sign color
         String unitPriceString = String.format("%.2f", unitPrice);
@@ -198,20 +210,40 @@ public class PlaceOrderFragment extends Fragment {
             addProductToOrderList(productName);
         });
 
-        // Add the button to the LinearLayout inside the ScrollView
-        placeOrderLinearLayout.addView(button);
+        // Add the button to the linear layout
+        LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+        linearLayout.addView(button, buttonLayoutParams);
 
-        // Add space below the button
+        // Load the image using Glide or Picasso
+        ImageView imageView = new ImageView(requireContext());
+        Glide.with(requireContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.loading_placeholder) // Placeholder image while loading
+                .error(android.R.drawable.ic_dialog_alert) // Error image if loading fails
+                .override(500, 500) // Adjust the size of the image
+                .into(imageView);
+
+        // Add the ImageView to the linear layout
+        LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+        linearLayout.addView(imageView, imageLayoutParams);
+
+        // Add the linear layout to the parent layout
+        placeOrderLinearLayout.addView(linearLayout);
+
+        // Add space below the button and image
         View space = new View(requireContext());
         space.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 64)); // Adjust the space height as needed
         placeOrderLinearLayout.addView(space);
 
-        // Add a gray border below the button
+        // Add a gray border below the button and image
         View border = new View(requireContext());
         border.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 8)); // Adjust the border height as needed
         border.setBackgroundColor(Color.GRAY);
         placeOrderLinearLayout.addView(border);
     }
+
+
+
 
 
 
