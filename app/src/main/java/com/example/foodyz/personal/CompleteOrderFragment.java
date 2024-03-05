@@ -1,18 +1,26 @@
 package com.example.foodyz.personal;
+
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.foodyz.R;
@@ -23,7 +31,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +81,44 @@ public class CompleteOrderFragment extends Fragment {
 
         // Create a new document in the "orders" collection and get its ID
         createOrderDocument();
+
+        // Add grey border and space below the text views
+        addGreyBorderAndSpace();
+
+        // Center the text views at the top in bright cyan
+        centerTextViews();
+
+
     }
+
+    private void navigateToMainActivity() {
+        Intent intent = new Intent(requireContext(), Personal_MainActivity.class);
+        startActivity(intent);
+        requireActivity().finish(); // Close the current activity
+    }
+
+
+    private void addGreyBorderAndSpace() {
+        // Create a grey border view
+        View borderView = new View(requireContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                2 // Border height
+        );
+        params.setMargins(0, 20, 0, 20); // Add space above and below the border
+        borderView.setLayoutParams(params);
+        borderView.setBackgroundColor(Color.GRAY);
+
+        // Add the border view to the LinearLayout
+        completeOrderLinearLayout.addView(borderView);
+    }
+
+    private void centerTextViews() {
+        // Center the text views at the top in bright cyan
+        totalTextView.setTextColor(Color.CYAN);
+        totalTextView.setGravity(Gravity.CENTER);
+    }
+
 
     private void createOrderDocument() {
         // Get Firestore instance
@@ -99,7 +143,6 @@ public class CompleteOrderFragment extends Fragment {
                     Toast.makeText(requireContext(), "Failed to create order document: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
-
 
     private void processProducts() {
         if (selectedProducts != null && !selectedProducts.isEmpty()) {
@@ -140,6 +183,7 @@ public class CompleteOrderFragment extends Fragment {
                                     // Update total cost in Firestore document
                                     updateTotalCostInFirestore(totalCost);
                                 }
+
                             } else {
                                 // Handle errors
                                 Exception exception = task.getException();
@@ -149,6 +193,7 @@ public class CompleteOrderFragment extends Fragment {
                             }
                         });
             }
+            createAcceptButton();
         } else {
             // Display a message prompt if no products are selected
             TextView noOrderTextView = new TextView(requireContext());
@@ -160,23 +205,51 @@ public class CompleteOrderFragment extends Fragment {
 
 
     private void createTextViewWithProductDetails(String productName, int quantity, double unitPrice) {
-        // Create a TextView
-        TextView textView = new TextView(requireContext());
+        // Create TextViews for each variable
+        TextView productTextView = createColoredTextView("Product: " + productName, Color.WHITE, 24);
+        TextView quantityTextView = createColoredTextView("Quantity: " + quantity, Color.GRAY, 18);
+        TextView unitPriceTextView = createColoredTextView("Unit Price: " + String.format("%.2f", unitPrice), Color.GRAY, 18);
 
-        // Set the text to display product details
-        String text = String.format("Product: %s\nQuantity: %d\nUnit Price: %.2f\nTotal Cost: %.2f", productName, quantity, unitPrice, unitPrice * quantity);
+        // Calculate total cost for this product
+        double totalCost = unitPrice * quantity;
+        TextView totalCostLabelTextView = createColoredTextView("Total Cost: ", Color.CYAN, 24);
+        TextView totalCostValueTextView = createColoredTextView(String.format("%.2f", totalCost), Color.CYAN, 24);
 
-        // Use SpannableString to make "Product: Burger" bold
-        SpannableString spannableString = new SpannableString(text);
-        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
-        spannableString.setSpan(boldSpan, 0, Math.min("Product: ".length() + productName.length(), text.length()), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+        // Set gravity to center
+        productTextView.setGravity(Gravity.CENTER);
+        quantityTextView.setGravity(Gravity.CENTER);
+        unitPriceTextView.setGravity(Gravity.CENTER);
+        totalCostLabelTextView.setGravity(Gravity.CENTER);
+        totalCostValueTextView.setGravity(Gravity.CENTER);
 
-        // Set the formatted text to the TextView
-        textView.setText(spannableString);
+        // Add TextViews to the LinearLayout
+        completeOrderLinearLayout.addView(productTextView);
+        completeOrderLinearLayout.addView(quantityTextView);
+        completeOrderLinearLayout.addView(unitPriceTextView);
+        completeOrderLinearLayout.addView(totalCostLabelTextView);
+        completeOrderLinearLayout.addView(totalCostValueTextView);
 
-        // Add the TextView to the LinearLayout
-        completeOrderLinearLayout.addView(textView);
+        addGreyBorderAndSpace();
     }
+
+    private TextView createColoredTextView(String text, int color, int textSize) {
+        TextView textView = new TextView(requireContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 0, 20); // Add margin bottom
+        textView.setLayoutParams(params);
+        textView.setText(text);
+        textView.setTextColor(color);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+        return textView;
+    }
+
+
+
+
+
 
     private void saveOrderDetailsToFirestore(String productName, int quantity, double unitPrice) {
         // Get Firestore instance
@@ -215,6 +288,41 @@ public class CompleteOrderFragment extends Fragment {
                     Toast.makeText(requireContext(), "Failed to update total cost: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
+
+    private void createAcceptButton() {
+        // Create the button
+        Button acceptButton = new Button(requireContext());
+        acceptButton.setText("Accept");
+
+        // Set text appearance attributes
+        acceptButton.setAllCaps(false);
+        acceptButton.setTextColor(Color.BLACK);
+        acceptButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+
+        // Set background color to bright cyan
+        acceptButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bright_cyan));
+
+        // Set corner radius
+        int cornerRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+        acceptButton.setBackgroundResource(R.drawable.rectangle_with_rounded_corners);
+
+        // Set layout parameters for the button
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM); // Align the button to the bottom of the parent layout
+        layoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL); // Center the button horizontally
+        layoutParams.setMargins(0, 0, 0, getResources().getDimensionPixelSize(R.dimen.space_above_button)); // Space above the button
+        acceptButton.setLayoutParams(layoutParams);
+
+        // Set OnClickListener to navigate to Personal_MainActivity
+        acceptButton.setOnClickListener(v -> navigateToMainActivity());
+
+        // Add the button to the parent layout
+        completeOrderLinearLayout.addView(acceptButton); // Assuming completeOrderLinearLayout is the parent layout
+    }
+
+
+
+
+
+
 }
-
-

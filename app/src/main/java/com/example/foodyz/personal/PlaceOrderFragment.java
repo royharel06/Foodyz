@@ -1,6 +1,7 @@
 package com.example.foodyz.personal;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
@@ -352,5 +353,6 @@ public class PlaceOrderFragment extends Fragment {
             selectedProducts.add(productName);
         }
     }
+
 
 }

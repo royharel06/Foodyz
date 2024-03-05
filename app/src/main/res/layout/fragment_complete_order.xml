@@ -1,12 +1,36 @@
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <!-- Thank you message -->
+    <TextView
+        android:id="@+id/thankYouTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Thank you for ordering!"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:layout_gravity="start"/>
+
+    <!-- TextView for total cost -->
+    <TextView
+        android:id="@+id/totalTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:padding="16dp"
+        android:text="Total: 0.0"
+        android:textSize="40sp" />
 
     <!-- ScrollView containing LinearLayout for product names -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
             android:id="@+id/completeOrderLinearLayout"
@@ -15,15 +39,6 @@
             android:orientation="vertical"
             android:padding="16dp">
             <!-- Product names will be dynamically added here -->
-
-            <!-- TextView for total cost -->
-            <TextView
-                android:id="@+id/totalTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total: 0.0"
-                android:textSize="18sp"
-                android:padding="16dp"/>
         </LinearLayout>
     </ScrollView>
-</RelativeLayout>
+</LinearLayout>
