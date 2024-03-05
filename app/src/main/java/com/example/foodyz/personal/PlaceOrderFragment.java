@@ -7,6 +7,7 @@ import android.graphics.drawable.shapes.RectShape;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.style.AbsoluteSizeSpan;
+import android.util.TypedValue;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
@@ -193,19 +194,25 @@ public class PlaceOrderFragment extends Fragment {
         textView.setPadding(16, 16, 16, 16);
         textView.setGravity(Gravity.CENTER_VERTICAL);
 
+        // Set layout params for the text view
+        LinearLayout.LayoutParams textLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+        textLayoutParams.width = getResources().getDisplayMetrics().widthPixels / 4; // Set width to 1/4 of the screen's width
+        textView.setLayoutParams(textLayoutParams);
+
         // Create the image view
         ImageView imageView = new ImageView(requireContext());
+        int imageSize = getResources().getDisplayMetrics().widthPixels / 3; // Set size to 1/4 of the screen width
+        LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(imageSize, imageSize);
+        imageView.setLayoutParams(imageLayoutParams);
         Glide.with(requireContext())
                 .load(imageUrl)
                 .placeholder(R.drawable.loading_placeholder) // Placeholder image while loading
                 .error(android.R.drawable.ic_dialog_alert) // Error image if loading fails
-                .override(500, 500) // Adjust the size of the image
+                .override(imageSize, imageSize) // Set the fixed width and height
+                .centerCrop() // Ensure all images maintain the same scale
                 .transform(new RoundedCorners(30)) // Apply rounded corners
                 .into(imageView);
 
-        // Set layout params for image view
-        LinearLayout.LayoutParams imageLayoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
-        imageLayoutParams.setMargins(0, 0, 20, 0); // Set right margin to create space between image and plus icon
 
         // Create the plus icon
         ImageView plusIcon = new ImageView(requireContext());
@@ -222,7 +229,7 @@ public class PlaceOrderFragment extends Fragment {
 
         // Add views to the linear layout
         linearLayout.addView(textView);
-        linearLayout.addView(imageView, imageLayoutParams);
+        linearLayout.addView(imageView);
         linearLayout.addView(plusIcon, plusIconLayoutParams);
 
         // Add the linear layout to the parent layout
@@ -291,6 +298,25 @@ public class PlaceOrderFragment extends Fragment {
         Button completeOrderButton = new Button(requireContext());
         completeOrderButton.setText("Complete Order");
 
+        // Set text appearance attributes
+        completeOrderButton.setAllCaps(false); // Set uppercase to false
+        completeOrderButton.setTextColor(Color.BLACK); // Set text color to black
+        completeOrderButton.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18); // Set text size to slightly bigger
+
+        // Set background color to bright cyan
+        completeOrderButton.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.bright_cyan));
+
+        // Set corner radius
+        int cornerRadius = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+        completeOrderButton.setBackgroundResource(R.drawable.rectangle_with_rounded_corners);
+
+        // Adjust width to be half of the screen width
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(screenWidth / 2, ViewGroup.LayoutParams.WRAP_CONTENT);
+        layoutParams.gravity = Gravity.CENTER_HORIZONTAL; // Center the button horizontally
+        layoutParams.topMargin = getResources().getDimensionPixelSize(R.dimen.space_above_button); // Space above the button
+        completeOrderButton.setLayoutParams(layoutParams);
+
         // Add an OnClickListener to handle button clicks
         completeOrderButton.setOnClickListener(v -> {
             // Navigate to CompleteOrderFragment when "Complete Order" button is clicked
@@ -300,6 +326,10 @@ public class PlaceOrderFragment extends Fragment {
         // Add the "Complete Order" button to the LinearLayout inside the ScrollView
         placeOrderLinearLayout.addView(completeOrderButton);
     }
+
+
+
+
 
     private void addProductToOrderList(String productName, int quantity) {
         // Add the selected product to the order list

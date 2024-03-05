@@ -1,21 +1,50 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Search EditText at the top -->
+    <!-- Search Icon -->
+    <ImageView
+        android:id="@+id/searchIcon"
+        android:layout_width="42dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/baseline_search_24"
+        app:tint="@android:color/white" />
+
+    <!-- Search EditText -->
     <EditText
         android:id="@+id/searchProductEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search Product"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:padding="16dp"/>
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:layout_toEndOf="@id/searchIcon"
+        android:layout_alignBottom="@id/searchIcon"
+        android:paddingStart="8dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
+
+    <!-- TextView for the order creation -->
+    <TextView
+        android:id="@+id/orderTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchProductEditText"
+        android:layout_alignParentEnd="true"
+        android:text="Create your order!"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:padding="16dp"
+        android:textStyle="bold"/>
 
     <!-- ScrollView containing LinearLayout for buttons -->
     <ScrollView
-        android:layout_below="@id/searchProductEditText"
+        android:layout_below="@id/orderTextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
