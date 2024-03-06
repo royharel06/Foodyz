@@ -212,7 +212,7 @@ public class CompleteOrderFragment extends Fragment {
 
         // Calculate total cost for this product
         double totalCost = unitPrice * quantity;
-        TextView totalCostLabelTextView = createColoredTextView("Total Cost: ", Color.CYAN, 24);
+        TextView totalCostLabelTextView = createColoredTextView("Cost: ", Color.CYAN, 24);
         TextView totalCostValueTextView = createColoredTextView(String.format("%.2f", totalCost), Color.CYAN, 24);
 
         // Set gravity to center

@@ -2,6 +2,7 @@ package com.example.foodyz.personal;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.Rating;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -39,7 +40,9 @@ public class OrderDetailsFragment extends Fragment {
     private FirebaseFirestore db;
     private TextView orderDetailsTextView;
 
-    public static OrderDetailsFragment newInstance(String orderId,String businessId, String businessName) {
+    private double totalCost;
+
+    public static OrderDetailsFragment newInstance(String orderId, String businessId, String businessName) {
         OrderDetailsFragment fragment = new OrderDetailsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ORDER_ID, orderId);
@@ -71,9 +74,7 @@ public class OrderDetailsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize orderDetailsTextView
-        orderDetailsTextView = view.findViewById(R.id.orderDetailsTextView);
-
+        orderDetailsLayout = view.findViewById(R.id.completeOrderLinearLayout);
         db = FirebaseFirestore.getInstance();
 
         // Query the database for order details
@@ -87,10 +88,11 @@ public class OrderDetailsFragment extends Fragment {
                             int quantity = document.getLong("quantity").intValue();
                             double unitPrice = document.getDouble("unit-price");
 
-                            String orderDetailText = String.format("Product: %s\nQuantity: %d\nUnit Price: %.2f\n", productName, quantity, unitPrice);
-                            // Append the order details to the TextView
-                            orderDetailsTextView.append(orderDetailText);
+                            // Create TextViews with product details
+                            createTextViewWithProductDetails(productName, quantity, unitPrice);
                         }
+                        // After adding all products, update total cost TextView
+                        updateTotalCostTextView();
                     }
                 });
 
@@ -100,7 +102,11 @@ public class OrderDetailsFragment extends Fragment {
         rateButton.setOnClickListener(v -> showRatedMessage());
     }
 
-    boolean clickedRate = false;
+    private void updateTotalCostTextView() {
+        TextView totalTextView = requireView().findViewById(R.id.totalTextView);
+        totalTextView.setText("Total: " + String.format("%.2f", totalCost));
+    }
+
 
     private void showRatedMessage() {
         // Query the ratings collection to get the user's rating
@@ -113,50 +119,69 @@ public class OrderDetailsFragment extends Fragment {
                         // Get the rating from the document
                         long rating = task.getResult().getDocuments().get(0).getLong("rating");
                         // Display the rated message and update button
-                        if(!(clickedRate)) {
-                            displayRatedMessage(rating);
-                            clickedRate = true;
-                        }
+                        showUpdateRatingDialog(businessName, rating);
+
                     } else {
-                        // User has not rated the business yet
-                        if(!(clickedRate)) {
+                            // User has not rated the business yet
                             showRatingDialog();
-                            clickedRate = true;
-                        }
+
                     }
                 });
     }
 
 
-    private void displayRatedMessage(long rating) {
-        // Display the rated message
-        String message = "You already rated " + businessName + " with " + rating + " stars";
-        TextView ratedTextView = new TextView(requireContext());
-        ratedTextView.setText(message);
+    // Helper method to create colored TextViews with product details
+    private void createTextViewWithProductDetails(String productName, int quantity, double unitPrice) {
+        // Create TextViews for each variable
+        TextView productTextView = createColoredTextView("Product: " + productName, Color.WHITE, 24);
+        TextView quantityTextView = createColoredTextView("Quantity: " + quantity, Color.GRAY, 18);
+        TextView unitPriceTextView = createColoredTextView("Unit Price: " + String.format("%.2f", unitPrice), Color.GRAY, 18);
 
-        // Set text view properties
-        ratedTextView.setGravity(Gravity.CENTER);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0);
-        ratedTextView.setLayoutParams(params);
+        // Calculate total cost for this product
+        double productCost = unitPrice * quantity;
+        totalCost += productCost; // Accumulate total cost
+        TextView totalCostValueTextView = createColoredTextView(String.format("Cost: %.2f \n", productCost), Color.CYAN, 24);
 
-        // Add the TextView to the layout
-        ((LinearLayout) requireView()).addView(ratedTextView);
+        // Set gravity to center
+        productTextView.setGravity(Gravity.CENTER);
+        quantityTextView.setGravity(Gravity.CENTER);
+        unitPriceTextView.setGravity(Gravity.CENTER);
+        totalCostValueTextView.setGravity(Gravity.CENTER);
 
-        // Create and add the Update button
-        Button updateButton = new Button(requireContext());
-        updateButton.setText("Update " + businessName + " rating");
-        updateButton.setTextColor(getResources().getColor(android.R.color.white)); // Apply text color
-        updateButton.setPadding(16, 8, 16, 8); // Apply padding
-        LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        buttonParams.gravity = Gravity.CENTER; // Center the button
-        buttonParams.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0); // Add top margin
-        updateButton.setLayoutParams(buttonParams); // Apply layout parameters
-        updateButton.setOnClickListener(v -> showUpdateRatingDialog());
-        ((LinearLayout) requireView()).addView(updateButton);
+        // Add TextViews to the LinearLayout
+        orderDetailsLayout.addView(productTextView);
+        orderDetailsLayout.addView(quantityTextView);
+        orderDetailsLayout.addView(unitPriceTextView);
+        orderDetailsLayout.addView(totalCostValueTextView);
+
+        addGreyBorderAndSpace();
     }
 
 
+    // Helper method to create colored TextViews
+    private TextView createColoredTextView(String text, int color, int textSize) {
+        TextView textView = new TextView(requireContext());
+        textView.setText(text);
+        textView.setTextColor(color);
+        textView.setTextSize(textSize);
+        return textView;
+    }
+
+    private void addGreyBorderAndSpace() {
+        // Add a gray border below the product details
+        View border = new View(requireContext());
+        LinearLayout.LayoutParams borderParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 2);
+        borderParams.setMargins(0, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin), 0, 0);
+        border.setLayoutParams(borderParams);
+        border.setBackgroundColor(Color.GRAY);
+        orderDetailsLayout.addView(border);
+
+        // Add space below the border
+        View space = new View(requireContext());
+        LinearLayout.LayoutParams spaceParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.activity_vertical_margin));
+        space.setLayoutParams(spaceParams);
+        orderDetailsLayout.addView(space);
+    }
 
     private void showRatingDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
@@ -183,15 +208,15 @@ public class OrderDetailsFragment extends Fragment {
     }
 
 
-    private void showUpdateRatingDialog() {
+    private void showUpdateRatingDialog(String businessName, long rating) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle("Update Rating for " + businessName);
+        builder.setTitle("You already rated " + businessName + " with " + rating + " stars");
 
         // Create a RatingBar programmatically
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_rating, null);
         builder.setView(dialogView);
 
-        builder.setPositiveButton("Submit", (dialog, which) -> {
+        builder.setPositiveButton("Update", (dialog, which) -> {
             // Handle submit button click
             RatingBar ratingBar = dialogView.findViewById(R.id.ratingBarDialog);
             long newRating = (long) ratingBar.getRating();
@@ -205,6 +230,24 @@ public class OrderDetailsFragment extends Fragment {
         });
 
         builder.show();
+    }
+
+    private void addRatingToFirestore(long rating) {
+        // Create a new document in "ratings" collection
+        Map<String, Object> ratingData = new HashMap<>();
+        ratingData.put("business-id", businessId);
+        ratingData.put("personal-id", personalId);
+        ratingData.put("rating", rating);
+
+        db.collection("ratings").add(ratingData)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(requireContext(), "Rating submitted successfully", Toast.LENGTH_SHORT).show();
+                    // Navigate to main activity fragment after rating
+                    navigateToMainActivity();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(requireContext(), "Failed to submit rating: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 
     private void updateRatingInFirestore(long newRating) {
@@ -232,25 +275,6 @@ public class OrderDetailsFragment extends Fragment {
                 });
     }
 
-    private void addRatingToFirestore(long rating) {
-        // Create a new document in "ratings" collection
-        Map<String, Object> ratingData = new HashMap<>();
-        ratingData.put("business-id", businessId);
-        ratingData.put("personal-id", personalId);
-        ratingData.put("rating", rating);
-
-        db.collection("ratings").add(ratingData)
-                .addOnSuccessListener(documentReference -> {
-                    Toast.makeText(requireContext(), "Rating submitted successfully", Toast.LENGTH_SHORT).show();
-                    // Navigate to main activity fragment after rating
-                    navigateToMainActivity();
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(requireContext(), "Failed to submit rating: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
-
     private void navigateToMainActivity() {
         // Create an instance of Personal_MainActivity
         Intent intent = new Intent(requireContext(), Personal_MainActivity.class);
@@ -258,4 +282,7 @@ public class OrderDetailsFragment extends Fragment {
         requireActivity().finish(); // Close the current activity
     }
 
+
+
 }
+
