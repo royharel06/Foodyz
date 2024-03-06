@@ -3,7 +3,6 @@ package com.example.foodyz.personal;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.Rating;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,7 +26,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
-public class OrderDetailsFragment extends Fragment {
+public class Personal_OrderDetailsFragment extends Fragment {
 
     private static final String ARG_ORDER_ID = "orderId";
     private static final String ARG_BUSINESS_NAME = "businessName";
@@ -42,8 +41,8 @@ public class OrderDetailsFragment extends Fragment {
 
     private double totalCost;
 
-    public static OrderDetailsFragment newInstance(String orderId, String businessId, String businessName) {
-        OrderDetailsFragment fragment = new OrderDetailsFragment();
+    public static Personal_OrderDetailsFragment newInstance(String orderId, String businessId, String businessName) {
+        Personal_OrderDetailsFragment fragment = new Personal_OrderDetailsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_ORDER_ID, orderId);
         args.putString(ARG_BUSINESS_ID, businessId);
@@ -67,7 +66,7 @@ public class OrderDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_order_details, container, false);
+        return inflater.inflate(R.layout.fragment_personal_order_details, container, false);
     }
 
     @Override

@@ -5,36 +5,40 @@
     android:layout_height="match_parent">
 
     <!-- Search Icon -->
-    <ImageView
-        android:id="@+id/searchIcon"
-        android:layout_width="42dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/baseline_search_24"
-        app:tint="@android:color/white" />
 
     <!-- Search EditText -->
-    <EditText
-        android:id="@+id/searchBusinessEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search Product"
-        android:textSize="24sp"
-        android:textColor="@android:color/white"
-        android:layout_toEndOf="@id/searchIcon"
-        android:layout_alignBottom="@id/searchIcon"
-        android:paddingStart="8dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
 
     <!-- TextView for the order creation -->
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/search_item_layout"
+        style="@style/CustomTextInputLayoutStyle"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:startIconDrawable="@drawable/baseline_search_24"
+        app:startIconTint="@color/white">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/search_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Item"
+            android:inputType="text"
+            android:textColor="@color/white" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <TextView
         android:id="@+id/businessTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/searchBusinessEditText"
+        android:layout_below="@id/search_item_layout"
         android:layout_alignParentEnd="true"
         android:padding="16dp"
         android:text="Where would you like to order from?"

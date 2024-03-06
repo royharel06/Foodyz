@@ -1,0 +1,9 @@
+<!-- custom_spinner_item.xml -->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textSize="26sp"
+    android:padding="5sp"
+    android:textColor="@color/bright_cyan"
+    android:background="@color/black"/>

@@ -7,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
 import com.example.foodyz.R;
 import com.example.foodyz.StartActivity;
 import com.google.android.material.textfield.TextInputEditText;
@@ -67,6 +69,7 @@ public class Business_ProfileFragment extends Fragment {
         TextInputEditText home_number = view.findViewById(R.id.address_number);
         TextInputEditText bank_number = view.findViewById(R.id.bank_number);
         TextInputEditText bank_branch = view.findViewById(R.id.bank_branch);
+        ImageView profile_picture = view.findViewById(R.id.imageView);
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -105,6 +108,18 @@ public class Business_ProfileFragment extends Fragment {
                                 bank_number.setText((String) card.get("number"));
                                 bank_branch.setText((String) card.get("bank"));
 
+                                // Set profile pictue:
+                                float density = getResources().getDisplayMetrics().density;
+                                int px = (int)(150 * density);
+
+                                Glide.with(this)
+                                        .load(image_url.getText().toString())
+                                        .override(px, px) // Set the image size
+                                        .centerCrop() // Adjust the image scaling to fill the 150dp x 150dp and crop the rest
+                                        .placeholder(R.drawable.loading_placeholder) // Optional placeholder while the image loads
+                                        .error(android.R.drawable.ic_dialog_alert) // Optional error placeholder if the image fails to load
+                                        .into(profile_picture);
+
                             } else {
                                 // Either no document found or multiple matching documents were found. Direct user to start screen:
                                 Log.e("FirestoreQuery", "Could not find ID of currently authenticated user. (ID: " + user_id + ")");
@@ -132,7 +147,6 @@ public class Business_ProfileFragment extends Fragment {
                 });
 
         Button save = view.findViewById(R.id.save_settings);
-
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

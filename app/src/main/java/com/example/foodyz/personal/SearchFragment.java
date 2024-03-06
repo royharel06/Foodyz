@@ -17,7 +17,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -30,18 +29,13 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.example.foodyz.R;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class SearchFragment extends Fragment {
 
@@ -56,7 +50,7 @@ public class SearchFragment extends Fragment {
         yourLinearLayout = rootView.findViewById(R.id.searchBusinessLinearLayout); // Change the ID to match your XML
 
         // Get the EditText for search input
-        EditText searchEditText = rootView.findViewById(R.id.searchBusinessEditText);
+        EditText searchEditText = rootView.findViewById(R.id.search_item);
 
         // Set a TextChangedListener to detect changes in search text
         searchEditText.addTextChangedListener(new TextWatcher() {

@@ -2,11 +2,7 @@ package com.example.foodyz.personal;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
-import android.text.style.StyleSpan;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -128,7 +124,7 @@ public class CompleteOrderFragment extends Fragment {
         Map<String, Object> orderData = new HashMap<>();
         orderData.put("business-id", businessId);
         orderData.put("date", FieldValue.serverTimestamp()); // Add current timestamp
-        orderData.put("status", "Not Received");
+        orderData.put("status", "Pending");
         orderData.put("total-cost", 0.0); // Initially set total cost to 0
         orderData.put("personal-id", FirebaseAuth.getInstance().getCurrentUser().getUid()); // Set personal-id to the current user's UID
 

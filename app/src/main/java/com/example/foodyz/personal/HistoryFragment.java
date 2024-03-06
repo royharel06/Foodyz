@@ -102,46 +102,51 @@ public class HistoryFragment extends Fragment {
                         int numDocuments = task.getResult().size();
                         AtomicInteger count = new AtomicInteger(); // Counter for tracking iterations
 
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            String orderId = document.getId();
-                            String businessId = document.getString("business-id");
+                        String[] status_list = new String[] {"Pending", "Ready", "Received"};
+                        for (String status : status_list) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                if (!document.getString("status").equals(status))
+                                    continue;
 
-                            // Retrieve date, status, and total cost from the orders collection
-                            Date date = document.getDate("date");
-                            String status = document.getString("status");
-                            double totalCost = document.getDouble("total-cost");
+                                String orderId = document.getId();
+                                String businessId = document.getString("business-id");
 
-                            // Query the business name using the business ID
-                            db.collection("business-accounts")
-                                    .whereEqualTo("business-id", businessId)
-                                    .get()
-                                    .addOnCompleteListener(task1 -> {
-                                        if (task1.isSuccessful()) {
-                                            for (QueryDocumentSnapshot document1 : task1.getResult()) {
-                                                String businessName = document1.getString("user-name");
-                                                if (businessName.toLowerCase(Locale.getDefault()).contains(searchText)) {
-                                                    // Create TextView for each order
-                                                    createTextViewForOrder(orderId, businessId, businessName, date, status, totalCost);
-                                                    hasResults.set(true); // Set flag to true as matching orders are found
+                                // Retrieve date, status, and total cost from the orders collection
+                                Date date = document.getDate("date");
+                                double totalCost = document.getDouble("total-cost");
+
+                                // Query the business name using the business ID
+                                db.collection("business-accounts")
+                                        .whereEqualTo("business-id", businessId)
+                                        .get()
+                                        .addOnCompleteListener(task1 -> {
+                                            if (task1.isSuccessful()) {
+                                                for (QueryDocumentSnapshot document1 : task1.getResult()) {
+                                                    String businessName = document1.getString("user-name");
+                                                    if (businessName.toLowerCase(Locale.getDefault()).contains(searchText)) {
+                                                        // Create TextView for each order
+                                                        createTextViewForOrder(orderId, businessId, businessName, date, status, totalCost);
+                                                        hasResults.set(true); // Set flag to true as matching orders are found
+                                                    }
+                                                }
+                                            } else {
+                                                // Handle errors
+                                                Exception exception = task1.getException();
+                                                if (exception != null) {
+                                                    exception.printStackTrace();
                                                 }
                                             }
-                                        } else {
-                                            // Handle errors
-                                            Exception exception = task1.getException();
-                                            if (exception != null) {
-                                                exception.printStackTrace();
-                                            }
-                                        }
 
-                                        // Increment the counter and check if it's the last iteration
-                                        count.getAndIncrement();
-                                        if (count.get() == numDocuments) {
-                                            // Display "No results!" message if no matching orders are found overall
-                                            if (!hasResults.get()) {
-                                                displayNoResultsMessage();
+                                            // Increment the counter and check if it's the last iteration
+                                            count.getAndIncrement();
+                                            if (count.get() == numDocuments) {
+                                                // Display "No results!" message if no matching orders are found overall
+                                                if (!hasResults.get()) {
+                                                    displayNoResultsMessage();
+                                                }
                                             }
-                                        }
-                                    });
+                                        });
+                            }
                         }
                     } else {
                         // Handle errors
@@ -209,7 +214,7 @@ public class HistoryFragment extends Fragment {
 
     private void navigateToOrderDetails(String orderId, String businessId, String businessName) {
         // Navigate to OrderDetailsFragment with orderId, businessId, and businessName
-        OrderDetailsFragment fragment = OrderDetailsFragment.newInstance(orderId, businessId, businessName);
+        Personal_OrderDetailsFragment fragment = Personal_OrderDetailsFragment.newInstance(orderId, businessId, businessName);
         requireActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.personal_frame_layout, fragment)
                 .addToBackStack(null)
@@ -236,7 +241,7 @@ public class HistoryFragment extends Fragment {
     private void displayNoResultsMessage() {
         // Create a TextView to display "no results found" message
         TextView noResultsTextView = new TextView(requireContext());
-        noResultsTextView.setText("No results found");
+        noResultsTextView.setText("No results found.");
         noResultsTextView.setGravity(Gravity.CENTER);
 
         // Set text size, color, and style
