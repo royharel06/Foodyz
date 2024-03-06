@@ -1,15 +1,14 @@
 package com.example.foodyz.business;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.foodyz.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,10 +28,12 @@ public class AddItemFragment extends Fragment {
     private static final String ARG_NAME = "name";
     private static final String ARG_DETAILS = "details";
     private static final String ARG_PRICE = "price";
+    private static final String ARG_URL = "url";
 
     private String product_name;
     private String product_details;
     private Double unit_price;
+    private String image_url;
 
     public AddItemFragment() {
         // Required empty public constructor
@@ -44,13 +45,14 @@ public class AddItemFragment extends Fragment {
      *
      * @return A new instance of fragment AddItemFragment.
      */
-    public static AddItemFragment newInstance(String name, String details, Double price) {
+    public static AddItemFragment newInstance(String name, String details, Double price, String imageUrl) {
         AddItemFragment fragment = new AddItemFragment();
 
         Bundle args = new Bundle();
         args.putString(ARG_NAME, name);
         args.putString(ARG_DETAILS, details);
         args.putDouble(ARG_PRICE, price);
+        args.putString(ARG_URL, imageUrl);
         fragment.setArguments(args);
 
         return fragment;
@@ -64,6 +66,7 @@ public class AddItemFragment extends Fragment {
             product_name = getArguments().getString(ARG_NAME);
             product_details = getArguments().getString(ARG_DETAILS);
             unit_price = getArguments().getDouble(ARG_PRICE);
+            image_url = getArguments().getString(ARG_URL);
         }
     }
 
@@ -75,6 +78,7 @@ public class AddItemFragment extends Fragment {
         EditText name = view.findViewById(R.id.item_name);
         EditText details = view.findViewById(R.id.item_details);
         EditText price = view.findViewById(R.id.item_price);
+        EditText url = view.findViewById(R.id.url_field);
 
         Button save = view.findViewById(R.id.save_item);
 
@@ -82,6 +86,7 @@ public class AddItemFragment extends Fragment {
             name.setText(product_name);
             details.setText(product_details);
             price.setText(Double.toString(unit_price));
+            url.setText(image_url);
         }
 
         save.setOnClickListener(new View.OnClickListener() {
@@ -90,13 +95,14 @@ public class AddItemFragment extends Fragment {
                 String itemName = name.getText().toString();
                 String itemDetails = details.getText().toString();
                 double itemPrice = Double.parseDouble(price.getText().toString());
+                String itemImage = url.getText().toString();
 
                 if (!product_name.isEmpty()) {
                     // If product_name is not empty, update the document
-                    updateDocument(itemName, itemDetails, itemPrice);
+                    updateDocument(itemName, itemDetails, itemPrice, itemImage);
                 } else {
                     // If product_name is empty, create a new document
-                    createNewDocument(itemName, itemDetails, itemPrice);
+                    createNewDocument(itemName, itemDetails, itemPrice, itemImage);
                 }
 
                 // Return to EditMenuFragment:
@@ -111,7 +117,7 @@ public class AddItemFragment extends Fragment {
         return view;
     }
 
-    private void updateDocument(String itemName, String itemDetails, double itemPrice) {
+    private void updateDocument(String itemName, String itemDetails, double itemPrice, String itemImage) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         String user_id = user.getUid();
@@ -129,7 +135,8 @@ public class AddItemFragment extends Fragment {
                         document.getReference().update(
                                 "product-name", itemName,
                                 "product-details", itemDetails,
-                                "product-price", itemPrice
+                                "product-price", itemPrice,
+                                "imageURL", itemImage
                         ).addOnSuccessListener(aVoid -> {
                             // Document updated successfully
                             Log.d("Firestore", "DocumentSnapshot updated successfully");
@@ -145,7 +152,7 @@ public class AddItemFragment extends Fragment {
                 });
     }
 
-    private void createNewDocument(String itemName, String itemDetails, double itemPrice) {
+    private void createNewDocument(String itemName, String itemDetails, double itemPrice, String itemImage) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         String user_id = user.getUid();
@@ -158,6 +165,7 @@ public class AddItemFragment extends Fragment {
                     put("product-name", itemName);
                     put("product-details", itemDetails);
                     put("product-price", itemPrice);
+                    put("imageURL", itemImage);
                     put("business-id", user_id); // Set the actual field name and value
                 }})
                 .addOnSuccessListener(documentReference -> {

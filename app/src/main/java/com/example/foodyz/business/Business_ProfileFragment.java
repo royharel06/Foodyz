@@ -2,20 +2,19 @@ package com.example.foodyz.business;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.foodyz.R;
 import com.example.foodyz.StartActivity;
-import com.example.foodyz.personal.Personal_MainActivity;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -60,12 +59,14 @@ public class Business_ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_business_profile, container, false);
 
-        EditText username = view.findViewById(R.id.username);
-        EditText city = view.findViewById(R.id.address_city);
-        EditText street = view.findViewById(R.id.address_street);
-        EditText home_number = view.findViewById(R.id.address_number);
-        EditText bank_number = view.findViewById(R.id.bank_number);
-        EditText bank_branch = view.findViewById(R.id.bank_branch);
+        TextInputEditText username = view.findViewById(R.id.username);
+        TextView rating = view.findViewById(R.id.rating);
+        TextInputEditText image_url = view.findViewById(R.id.url);
+        TextInputEditText city = view.findViewById(R.id.address_city);
+        TextInputEditText street = view.findViewById(R.id.address_street);
+        TextInputEditText home_number = view.findViewById(R.id.address_number);
+        TextInputEditText bank_number = view.findViewById(R.id.bank_number);
+        TextInputEditText bank_branch = view.findViewById(R.id.bank_branch);
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
@@ -73,6 +74,9 @@ public class Business_ProfileFragment extends Fragment {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference users_collection = db.collection("business-accounts");
+
+        // Get current business rating:
+        fetchBusinessRating(user_id, rating);
 
         // Write current profile settings onto text fields:
         users_collection.whereEqualTo("business-id", user_id)
@@ -88,6 +92,8 @@ public class Business_ProfileFragment extends Fragment {
                                 DocumentSnapshot document = querySnapshot.getDocuments().get(0);
 
                                 username.setText(document.getString("user-name"));
+
+                                image_url.setText(document.getString("imageURL"));
 
                                 Map<String, Object> address = (Map<String, Object>) document.get("address");
                                 city.setText((String) address.get("city"));
@@ -131,6 +137,7 @@ public class Business_ProfileFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String txt_username = username.getText().toString();
+                String txt_url = image_url.getText().toString();
                 String txt_city = city.getText().toString();
                 String txt_street = street.getText().toString();
                 String txt_home_number = home_number.getText().toString();
@@ -142,6 +149,7 @@ public class Business_ProfileFragment extends Fragment {
                         txt_bank_number, txt_bank_branch)) {
 
                     updateUser(txt_username,
+                            txt_url,
                             txt_city, txt_street, txt_home_number,
                             txt_bank_number, txt_bank_branch);
 
@@ -184,6 +192,7 @@ public class Business_ProfileFragment extends Fragment {
     }
 
     private void updateUser(String username,
+                            String url,
                             String city, String street, String home_number,
                             String bank_number, String bank_branch) {
 
@@ -201,6 +210,7 @@ public class Business_ProfileFragment extends Fragment {
                         // Update the document with the new values
                         document.getReference().update(
                                 "user-name", username,
+                                "imageURL", url,
                                 "address.city", city,
                                 "address.street", street,
                                 "address.number", home_number,
@@ -218,6 +228,44 @@ public class Business_ProfileFragment extends Fragment {
                 .addOnFailureListener(e -> {
                     // Handle errors
                     Log.e("Firestore", "Error getting documents", e);
+                });
+    }
+
+    private void fetchBusinessRating(String businessId, TextView rating_field) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Fetch ratings from Firestore using businessId
+        CollectionReference ratingsCollection = db.collection("ratings");
+
+        ratingsCollection.whereEqualTo("business-id", businessId)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        int totalRatings = 0;
+                        int numberOfRatings = 0;
+
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            Double rating = document.getDouble("rating");
+                            if (rating != null) {
+                                totalRatings += rating;
+                                numberOfRatings++;
+                            }
+                        }
+
+                        double averageRating = 0;
+                        if (numberOfRatings > 0) {
+                            averageRating = totalRatings / (double) numberOfRatings;
+                        }
+
+                        // Create the business card with user name and rating
+                        rating_field.setText(String.format("%.2f/5", averageRating));
+                    } else {
+                        // Handle errors
+                        Exception exception = task.getException();
+                        if (exception != null) {
+                            exception.printStackTrace();
+                        }
+                    }
                 });
     }
 }

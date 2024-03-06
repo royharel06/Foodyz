@@ -1,27 +1,55 @@
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <!-- Search EditText at the top -->
+    <!-- Search Icon -->
+    <ImageView
+        android:id="@+id/searchIcon"
+        android:layout_width="42dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/baseline_search_24"
+        app:tint="@android:color/white" />
+
+    <!-- Search EditText -->
     <EditText
-        android:id="@+id/searchEditText"
+        android:id="@+id/searchBusinessEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Search business"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:padding="16dp"/>
+        android:hint="Search Product"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:layout_toEndOf="@id/searchIcon"
+        android:layout_alignBottom="@id/searchIcon"
+        android:paddingStart="8dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"/>
+
+    <!-- TextView for the order creation -->
+    <TextView
+        android:id="@+id/businessTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/searchBusinessEditText"
+        android:layout_alignParentEnd="true"
+        android:padding="16dp"
+        android:text="Where would you like to order from?"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <!-- ScrollView containing LinearLayout for buttons -->
     <ScrollView
+        android:layout_below="@id/businessTextView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/yourLinearLayout"
+            android:id="@+id/searchBusinessLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -30,4 +58,4 @@
         </LinearLayout>
     </ScrollView>
 
-</LinearLayout>
+</RelativeLayout>
