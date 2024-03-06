@@ -35,6 +35,7 @@ public class Business_RegisterActivity extends AppCompatActivity {
         TextInputEditText email = findViewById(R.id.email);
         TextInputEditText password = findViewById(R.id.password);
         TextInputEditText username = findViewById(R.id.username);
+        TextInputEditText image = findViewById(R.id.url);
         TextInputEditText city = findViewById(R.id.address_city);
         TextInputEditText street = findViewById(R.id.address_street);
         TextInputEditText home_number = findViewById(R.id.address_number);
@@ -51,6 +52,7 @@ public class Business_RegisterActivity extends AppCompatActivity {
                 String txt_email = email.getText().toString();
                 String txt_password = password.getText().toString();
                 String txt_username = username.getText().toString();
+                String txt_image = image.getText().toString();
                 String txt_city = city.getText().toString();
                 String txt_street = street.getText().toString();
                 String txt_home_number = home_number.getText().toString();
@@ -61,7 +63,7 @@ public class Business_RegisterActivity extends AppCompatActivity {
                         txt_city, txt_street, txt_home_number,
                         txt_bank_number, txt_bank_branch)) {
 
-                    registerUser(txt_email, txt_username, txt_password,
+                    registerUser(txt_email, txt_username, txt_password, txt_image,
                             txt_city, txt_street, txt_home_number,
                             txt_bank_number, txt_bank_branch);
                 }
@@ -69,14 +71,14 @@ public class Business_RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void registerUser(String email, String username, String password,
+    private void registerUser(String email, String username, String password, String image,
                               String city, String street, String home_number,
                               String bank_number, String bank_branch) {
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(Business_RegisterActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    saveUserSettings(email, username,
+                    saveUserSettings(email, username, image,
                             city, street, home_number,
                             bank_number, bank_branch);
 
@@ -128,7 +130,7 @@ public class Business_RegisterActivity extends AppCompatActivity {
         return true;
     }
 
-    private void saveUserSettings(String email, String username,
+    private void saveUserSettings(String email, String username, String image,
                                   String city, String street, String home_number,
                                   String bank_number, String bank_branch) {
 
@@ -147,6 +149,7 @@ public class Business_RegisterActivity extends AppCompatActivity {
         Map<String, Object> business_accounts_entry = new HashMap<>();
         business_accounts_entry.put("user-name", username);
         business_accounts_entry.put("email", email);
+        business_accounts_entry.put("imageURL", image);
         business_accounts_entry.put("business-id", user_id);
         business_accounts_entry.put("address", address);
         business_accounts_entry.put("bank-account", bank);
