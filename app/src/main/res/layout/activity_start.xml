@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     tools:context=".StartActivity">
 
     <Button
@@ -11,10 +12,11 @@
         android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_marginStart="80dp"
-        android:layout_marginTop="262dp"
+        android:layout_marginTop="300dp"
         android:layout_marginEnd="81dp"
         android:layout_marginBottom="20dp"
         android:text="Login"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@+id/register_personal_forward"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -29,6 +31,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="81dp"
         android:text="Register Personal"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,9 +45,27 @@
         android:layout_marginTop="20dp"
         android:layout_marginEnd="81dp"
         android:text="Register Business"
+        android:textColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/register_personal_forward" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="117dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="118dp"
+        android:text="Foodyz"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:textColor="@color/bright_cyan"
+        android:textStyle="bold|italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
