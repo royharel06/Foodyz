@@ -1,18 +1,49 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center">
+    android:layout_height="match_parent">
 
-    <!-- TextView to display order details -->
+    <!-- TextView for the thank you message -->
     <TextView
-        android:id="@+id/orderDetailsTextView"
+        android:id="@+id/thankYouTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
+        android:text="You're viewing your order's receipt!"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         android:padding="16dp"
-        android:gravity="center"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <!-- TextView for the total cost -->
+    <TextView
+        android:id="@+id/totalTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Total: 0.0"
+        android:textSize="40sp"
+        android:textColor="@color/bright_cyan"
+        android:layout_below="@id/thankYouTextView" />
+
+    <!-- ScrollView containing LinearLayout for product names -->
+    <ScrollView
+        android:id="@+id/productNamesScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/totalTextView"
+        android:layout_above="@id/rateButton">
+
+        <LinearLayout
+            android:id="@+id/completeOrderLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <!-- Product names will be dynamically added here -->
+        </LinearLayout>
+    </ScrollView>
 
     <!-- Button to rate the business -->
     <Button
@@ -20,6 +51,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Rate This Business"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
-</LinearLayout>
+</RelativeLayout>
