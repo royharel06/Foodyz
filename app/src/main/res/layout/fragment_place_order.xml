@@ -1,52 +1,87 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".personal.PlaceOrderFragment">
 
-    <!-- Search Icon -->
-    <ImageView
-        android:id="@+id/searchIcon"
-        android:layout_width="42dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/baseline_search_24"
-        app:tint="@android:color/white" />
+    <Button
+        android:id="@+id/complete_order"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="81dp"
+        android:layout_marginBottom="25dp"
+        android:text="Complete Order"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Search EditText -->
-    <EditText
-        android:id="@+id/searchProductEditText"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchProductEditText_layout"
+        style="@style/CustomTextInputLayoutStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Search Product"
-        android:textSize="24sp"
-        android:textColor="@android:color/white"
-        android:layout_toEndOf="@id/searchIcon"
-        android:layout_alignBottom="@id/searchIcon"
-        android:paddingStart="8dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
+        android:layout_height="50dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:startIconDrawable="@drawable/baseline_search_24"
+        app:startIconTint="@color/white">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchProductEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Search Product"
+            android:inputType="text"
+            android:textColor="@color/white"
+            tools:layout_editor_absoluteX="6dp"
+            tools:layout_editor_absoluteY="85dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <!-- TextView for the order creation -->
+
+    <!-- ScrollView containing LinearLayout for buttons -->
     <TextView
         android:id="@+id/orderTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/searchProductEditText"
+        android:layout_width="350dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/searchProductEditText_layout"
         android:layout_alignParentEnd="true"
-        android:padding="16dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="31dp"
         android:text="Create your order!"
         android:textColor="@android:color/white"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchProductEditText_layout" />
 
-    <!-- ScrollView containing LinearLayout for buttons -->
     <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_below="@id/orderTextView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/complete_order"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/orderTextView">
 
         <LinearLayout
             android:id="@+id/placeOrderLinearLayout"
@@ -58,4 +93,4 @@
         </LinearLayout>
     </ScrollView>
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

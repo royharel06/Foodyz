@@ -1,45 +1,29 @@
 package com.example.foodyz.personal;
+
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Paint;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
-import android.text.InputFilter;
-import android.text.InputType;
-import android.text.style.AbsoluteSizeSpan;
-import android.util.TypedValue;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout.LayoutParams;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.TextWatcher;
+import android.text.style.AbsoluteSizeSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
-import android.widget.Space;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.constraintlayout.widget.Guideline;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -58,6 +42,7 @@ public class PlaceOrderFragment extends Fragment {
 
     private LinearLayout placeOrderLinearLayout;
     private EditText searchProductEditText;
+    private Button completeOrderButton;
     private String businessId;
     private List<String> selectedProducts = new ArrayList<>();
 
@@ -86,6 +71,7 @@ public class PlaceOrderFragment extends Fragment {
 
         placeOrderLinearLayout = rootView.findViewById(R.id.placeOrderLinearLayout);
         searchProductEditText = rootView.findViewById(R.id.searchProductEditText);
+        completeOrderButton = rootView.findViewById(R.id.complete_order);
 
         if (getArguments() != null) {
             businessId = getArguments().getString("businessId");
@@ -107,6 +93,16 @@ public class PlaceOrderFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 // Query Firestore and create product buttons based on the search text
                 queryFirestoreAndCreateButtons(s.toString());
+            }
+        });
+
+        completeOrderButton.setOnClickListener(v -> {
+            if (selectedProducts != null && !selectedProducts.isEmpty()) {
+                // Navigate to CompleteOrderFragment when "Complete Order" button is clicked
+                navigateToCompleteOrder(businessId, selectedProducts);
+            } else {
+                // Show message if no products were selected
+                Toast.makeText(requireContext(), "No products were selected!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -141,7 +137,7 @@ public class PlaceOrderFragment extends Fragment {
                 if (!foundResults.get()) {
                     createNoResultsMessage();
                 } else {
-                    createCompleteOrderButton();
+                    //createCompleteOrderButton();
                 }
             } else {
                 // Handle errors
