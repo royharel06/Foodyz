@@ -1,19 +1,19 @@
 package com.example.foodyz;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.foodyz.personal.Personal_MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,17 +32,17 @@ public class Personal_RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_register);
 
-        EditText email = findViewById(R.id.email);
-        EditText password = findViewById(R.id.password);
-        EditText username = findViewById(R.id.username);
-        EditText city = findViewById(R.id.address_city);
-        EditText street = findViewById(R.id.address_street);
-        EditText home_number = findViewById(R.id.address_number);
-        EditText card_number = findViewById(R.id.card_number);
-        EditText card_cvv = findViewById(R.id.card_cvv);
-        EditText card_holder_name = findViewById(R.id.card_holder_name);
-        EditText card_month = findViewById(R.id.card_month);
-        EditText card_year = findViewById(R.id.card_year);
+        TextInputEditText email = findViewById(R.id.email);
+        TextInputEditText password = findViewById(R.id.password);
+        TextInputEditText username = findViewById(R.id.username);
+        TextInputEditText city = findViewById(R.id.address_city);
+        TextInputEditText street = findViewById(R.id.address_street);
+        TextInputEditText home_number = findViewById(R.id.address_number);
+        TextInputEditText card_number = findViewById(R.id.card_number);
+        TextInputEditText card_cvv = findViewById(R.id.card_cvv);
+        TextInputEditText card_holder_name = findViewById(R.id.card_holder_name);
+        TextInputEditText card_month = findViewById(R.id.card_month);
+        TextInputEditText card_year = findViewById(R.id.card_year);
 
         Button register = findViewById(R.id.register_personal);
 

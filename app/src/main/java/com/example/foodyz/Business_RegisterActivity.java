@@ -1,20 +1,19 @@
 package com.example.foodyz;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.foodyz.business.Business_MainActivity;
-import com.example.foodyz.personal.Personal_MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -33,14 +32,14 @@ public class Business_RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_business_register);
 
-        EditText email = findViewById(R.id.email);
-        EditText password = findViewById(R.id.password);
-        EditText username = findViewById(R.id.username);
-        EditText city = findViewById(R.id.address_city);
-        EditText street = findViewById(R.id.address_street);
-        EditText home_number = findViewById(R.id.address_number);
-        EditText bank_number = findViewById(R.id.bank_number);
-        EditText bank_branch = findViewById(R.id.bank_branch);
+        TextInputEditText email = findViewById(R.id.email);
+        TextInputEditText password = findViewById(R.id.password);
+        TextInputEditText username = findViewById(R.id.username);
+        TextInputEditText city = findViewById(R.id.address_city);
+        TextInputEditText street = findViewById(R.id.address_street);
+        TextInputEditText home_number = findViewById(R.id.address_number);
+        TextInputEditText bank_number = findViewById(R.id.bank_number);
+        TextInputEditText bank_branch = findViewById(R.id.bank_branch);
 
         Button register = findViewById(R.id.register_business);
 
