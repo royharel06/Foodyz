@@ -2,35 +2,27 @@ package com.example.foodyz.personal;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.foodyz.LoginActivity;
-import com.example.foodyz.Personal_RegisterActivity;
+import androidx.fragment.app.Fragment;
+
 import com.example.foodyz.R;
 import com.example.foodyz.StartActivity;
-import com.example.foodyz.business.Business_MainActivity;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.List;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,15 +58,15 @@ public class Personal_ProfileFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_personal_profile, container, false);
 
-        EditText username = view.findViewById(R.id.username);
-        EditText city = view.findViewById(R.id.address_city);
-        EditText street = view.findViewById(R.id.address_street);
-        EditText home_number = view.findViewById(R.id.address_number);
-        EditText card_number = view.findViewById(R.id.card_number);
-        EditText card_cvv = view.findViewById(R.id.card_cvv);
-        EditText card_holder_name = view.findViewById(R.id.card_holder_name);
-        EditText card_month = view.findViewById(R.id.card_month);
-        EditText card_year = view.findViewById(R.id.card_year);
+        TextInputEditText username = view.findViewById(R.id.username);
+        TextInputEditText city = view.findViewById(R.id.address_city);
+        TextInputEditText street = view.findViewById(R.id.address_street);
+        TextInputEditText home_number = view.findViewById(R.id.address_number);
+        TextInputEditText card_number = view.findViewById(R.id.card_number);
+        TextInputEditText card_cvv = view.findViewById(R.id.card_cvv);
+        TextInputEditText card_holder_name = view.findViewById(R.id.card_holder_name);
+        TextInputEditText card_month = view.findViewById(R.id.card_month);
+        TextInputEditText card_year = view.findViewById(R.id.card_year);
 
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
