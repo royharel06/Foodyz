@@ -112,7 +112,7 @@ public class Personal_RegisterActivity extends AppCompatActivity {
         }
 
         // Check password length:
-        if (password.length() < 4) {
+        if (password.length() < 6) {
             Toast.makeText(Personal_RegisterActivity.this, "Password too short!", Toast.LENGTH_SHORT).show();
             return false;
         }

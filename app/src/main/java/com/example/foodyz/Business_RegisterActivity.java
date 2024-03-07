@@ -86,6 +86,9 @@ public class Business_RegisterActivity extends AppCompatActivity {
                     startActivity(new Intent(Business_RegisterActivity.this, Business_MainActivity.class));
                     finish();
                 } else {
+                    if (task.getException() != null) { // Check if there is an exception
+                        Log.e("RegistrationError", task.getException().getMessage()); // Log the exception message
+                    }
                     Toast. makeText(Business_RegisterActivity.this, "Registration failed!", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(Business_RegisterActivity.this, StartActivity.class));
                     finish();
@@ -108,7 +111,7 @@ public class Business_RegisterActivity extends AppCompatActivity {
         }
 
         // Check password length:
-        if (password.length() < 4) {
+        if (password.length() < 6) {
             Toast.makeText(Business_RegisterActivity.this, "Password too short!", Toast.LENGTH_SHORT).show();
             return false;
         }
